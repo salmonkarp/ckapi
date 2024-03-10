@@ -15,12 +15,13 @@ const productRecordSchema = mongoose.Schema({
   },
   priceType: {
     type: String,
+    ref: "Product",
     required: [true, "Enter the price type"],
     validate: {
       validator: async function (value) {
         const priceType = await mongoose
           .model("Product")
-          .findOne({ [`prices.${value}`]: { $exists: true } });
+          .findOne({ [value]: { $exists: true } });
         return priceType !== null; // Return true if product exists, false otherwise
       },
       message: "Price type does not exist",
@@ -73,32 +74,25 @@ const hamperRecordSchema = mongoose.Schema({
   },
 });
 
-const orderSchema = mongoose.Schema(
+const invoiceSchema = mongoose.Schema(
   {
     customerId: {
       type: mongoose.Schema.Types.ObjectId,
       required: [true, "Enter the customer id"],
-      validate: {
-        validator: async function (value) {
-          const customer = await mongoose.model("Customer").findById(value);
-          return customer !== null;
-        },
-        message: "Customer Id must already exist",
-      },
     },
     deliveryDate: {
-      type: Date,
-      default: Date.now(),
+      type: mongoose.Schema.Types.Date,
+      default: "",
     },
     productContent: {
       type: [productRecordSchema],
-      required: false,
+      required: [true, "Enter a product record array"],
     },
     hamperContent: {
       type: [hamperRecordSchema],
-      required: false,
+      required: [true, "Enter a hamper record array"],
     },
-    orderDiscount: {
+    invoiceDiscount: {
       type: Number,
       default: 0,
     },
@@ -113,17 +107,10 @@ const orderSchema = mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: "order",
+    collection: "invoice",
   }
 );
 
-orderSchema.path("productContent").validate(function (value) {
-  return (
-    (value && value.length > 0) ||
-    (this.hamperContent && this.hamperContent.length > 0)
-  );
-}, "At least one product or one hamper must be included.");
+const Invoice = mongoose.model("Invoice", invoiceSchema);
 
-const Order = mongoose.model("Order", orderSchema);
-
-module.exports = Order;
+module.exports = Invoice;

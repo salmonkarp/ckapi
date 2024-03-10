@@ -19,17 +19,23 @@ app.get("/", (req, res) => {
   res.send("Hello World, I am Cookies Kingdom's Order Management Database");
 });
 
-// importing routes
+// importing basic routes
 const productRoutes = require("./routes/productRoutes");
 const hamperRoutes = require("./routes/hamperRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const invoiceRoutes = require("./routes/invoiceRoutes");
+
+// importing aggregation routes
+const aggregationRoutes = require("./routes/aggregationRoutes");
 
 // using routes
 app.use("/product", productRoutes);
 app.use("/hamper", hamperRoutes);
 app.use("/customer", customerRoutes);
 app.use("/order", orderRoutes);
+app.use("/invoice", invoiceRoutes);
+app.use("/aggregation", aggregationRoutes);
 
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;
