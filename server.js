@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const app = express();
+const authenticateApiKey = require("./authenticationMiddleware");
 
 // environment variables
 const port = process.env.PORT || 3000;
@@ -14,28 +15,16 @@ const dbPassword = process.env.DB_PASSWORD;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// main routes
+// main route
 app.get("/", (req, res) => {
   res.send("Hello World, I am Cookies Kingdom's Order Management Database");
 });
 
-// importing basic routes
-const productRoutes = require("./routes/productRoutes");
-const hamperRoutes = require("./routes/hamperRoutes");
-const customerRoutes = require("./routes/customerRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const invoiceRoutes = require("./routes/invoiceRoutes");
+// helper router to authenticate everything
+const routingConfig = require("./routingConfig");
 
-// importing aggregation routes
-const aggregationRoutes = require("./routes/aggregationRoutes");
-
-// using routes
-app.use("/product", productRoutes);
-app.use("/hamper", hamperRoutes);
-app.use("/customer", customerRoutes);
-app.use("/order", orderRoutes);
-app.use("/invoice", invoiceRoutes);
-app.use("/aggregation", aggregationRoutes);
+// using authentication route
+app.use("/", authenticateApiKey, routingConfig);
 
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;

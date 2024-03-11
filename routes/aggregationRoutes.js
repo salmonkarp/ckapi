@@ -25,7 +25,7 @@ router.get("/hamperDetail/:id", async (req, res) => {
 });
 
 async function aggregateObject(originalObject) {
-  const modifiedObject = await { ...originalObject.toJSON() };
+  const modifiedObject = { ...originalObject.toJSON() };
   for (const productContent of modifiedObject.productContent) {
     const product = await Product.findById(productContent.productId);
     if (product) {
