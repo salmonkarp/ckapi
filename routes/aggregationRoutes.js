@@ -31,7 +31,7 @@ async function aggregateObject(originalObject) {
     if (product) {
       productContent.priceValue = product.prices[productContent.priceType];
       productContent.name = product.name;
-      console.log(productContent.name);
+      // console.log(productContent.name);
     }
   }
   for (const hamperContent of modifiedObject.hamperContent) {
@@ -41,7 +41,7 @@ async function aggregateObject(originalObject) {
       hamperContent.name = hamper.name;
     }
   }
-  console.log(modifiedObject);
+  // console.log(modifiedObject);
   return modifiedObject;
 }
 
