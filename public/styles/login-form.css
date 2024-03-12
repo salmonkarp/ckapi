@@ -1,5 +1,5 @@
 form {
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     border-radius: 1rem;
     color:black;
     display:flex;
@@ -9,7 +9,7 @@ form {
     justify-content: space-evenly;
     padding-inline:3rem;
     padding-block:1rem;
-    box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.103);
+    box-shadow: 10px 10px 20px 0px rgba(210, 210, 210, 0.584);
     border: solid 1px rgba(128, 128, 128, 0.128);
 }
 
