@@ -38,12 +38,21 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findByIdAndUpdate(id, req.body);
+    const update = req.body;
+
+    const validationResult = await Product.validate(update);
+    if (validationResult.error) {
+      return res.status(400).json({ message: validationResult.error.message });
+    }
+    // Find and update the product by ID
+    const product = await Product.findByIdAndUpdate(id, update, { new: true });
     if (!product) {
       return res
         .status(404)
-        .json({ message: `cannot find product with ID ${id}` });
+        .json({ message: `Cannot find product with ID ${id}` });
     }
+
+    // Fetch the updated product and send it in the response
     const updatedProduct = await Product.findById(id);
     res.status(200).json(updatedProduct);
   } catch (error) {

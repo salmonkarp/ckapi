@@ -13,18 +13,23 @@ const dbPassword = process.env.DB_PASSWORD;
 
 // middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
+
+// // API Routes
+
+// helper/wrapper router to authenticate everything
+const routingConfig = require("./routingConfig");
+
+// using authentication route
+app.use("/api", authenticateApiKey, routingConfig);
+
+// // Website Routes
+app.set("view engine", "ejs");
 
 // main route
 app.get("/", (req, res) => {
   res.send("Hello World, I am Cookies Kingdom's Order Management Database");
 });
-
-// helper router to authenticate everything
-const routingConfig = require("./routingConfig");
-
-// using authentication route
-app.use("/", authenticateApiKey, routingConfig);
 
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;

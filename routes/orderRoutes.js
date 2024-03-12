@@ -39,7 +39,12 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await Order.findByIdAndUpdate(id, req.body);
+    const update = req.body;
+    const { error } = Order.validate(update);
+    if (error) {
+      return res.status(400).json({ message: error.message });
+    }
+    const order = await Order.findByIdAndUpdate(id, update);
     if (!order) {
       return res
         .status(404)
