@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 // importing basic routes
-const productRoutes = require("./routes/productRoutes");
-const hamperRoutes = require("./routes/hamperRoutes");
-const customerRoutes = require("./routes/customerRoutes");
-const orderRoutes = require("./routes/orderRoutes");
-const invoiceRoutes = require("./routes/invoiceRoutes");
+const productRoutes = require("./productRoutes");
+const hamperRoutes = require("./hamperRoutes");
+const customerRoutes = require("./customerRoutes");
+const orderRoutes = require("./orderRoutes");
+const invoiceRoutes = require("./invoiceRoutes");
 
 // importing aggregation routes
-const aggregationRoutes = require("./routes/aggregationRoutes");
+const aggregationRoutes = require("./aggregationRoutes");
 
 router.use("/product", productRoutes);
 router.use("/hamper", hamperRoutes);
