@@ -37,33 +37,6 @@ app.use("/api", authenticateApiKey, wrapperRoute);
 
 // // Core Website / Login Routes
 
-app.get("/", (req, res) => {
-  if (req.session.user === "order") {
-    res.redirect("/orderDashboard");
-  } else if (req.session.user === "invoice") {
-    res.redirect("/invoiceDashboard");
-  } else {
-    res.redirect("/login");
-  }
-});
-
-app.get("/login", (req, res) => {
-  res.render("login");
-});
-
-app.post("/login", (req, res) => {
-  const { userType, password } = req.body;
-  console.log(userType, password);
-  if (userType === "order" && password === orderPassword) {
-    req.session.user = userType;
-    res.redirect("/orderDashboard");
-  } else if (userType === "invoice" && password === invoicePassword) {
-    res.redirect("/invoicePassword");
-  } else {
-    res.render("login");
-  }
-});
-
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;
 mongoose

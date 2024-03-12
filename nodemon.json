@@ -1,3 +1,6 @@
 {
-    "ext":"js,json,ejs,mjs,cjs,css,html"
+    "ext":"js,json,ejs,mjs,cjs,css,html",
+    "ignore":[
+        "public"
+    ]
 }

@@ -4,10 +4,11 @@ const express = require("express");
 const session = require("express-session");
 const mongoose = require("mongoose");
 const app = express();
+const path = require("path");
 const authenticateApiKey = require("./authenticationMiddleware");
 
 // environment variables
-const port = 3010;
+const port = 3000;
 const dbHost = process.env.DB_HOST;
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
@@ -16,6 +17,7 @@ const orderPassword = process.env.ORDER_PASSWORD;
 const invoicePassword = process.env.INVOICE_PASSWORD;
 
 // middleware
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -29,11 +31,7 @@ app.use(
 app.use(express.static("public"));
 
 app.set("view engine", "ejs");
-const userAuthentication = require("./userAuthentication");
-
-// // API Routes
-const wrapperRoute = require("./routes/wrapperRoute");
-app.use("/api", authenticateApiKey, wrapperRoute);
+app.set("views", path.join(__dirname, "/public/views"));
 
 // // Core Website / Login Routes
 
@@ -65,6 +63,6 @@ app.post("/login", (req, res) => {
   }
 });
 
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Node API is running on port ${port}.`);
 });
