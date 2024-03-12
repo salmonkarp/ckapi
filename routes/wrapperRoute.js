@@ -11,6 +11,12 @@ const invoiceRoutes = require("./invoiceRoutes");
 // importing aggregation routes
 const aggregationRoutes = require("./aggregationRoutes");
 
+router.get("/", (req, res) => {
+  res.send(
+    "Welcome to CK's Data Management API. Read the documentation to find out more."
+  );
+});
+
 router.use("/product", productRoutes);
 router.use("/hamper", hamperRoutes);
 router.use("/customer", customerRoutes);
