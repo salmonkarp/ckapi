@@ -29,9 +29,17 @@ async function aggregateObject(originalObject) {
   const modifiedObject = { ...originalObject.toJSON() };
 
   const customer = await Customer.findById(modifiedObject.customerId);
-  modifiedObject.customer_name = customer.name;
-  modifiedObject.customer_address = customer.address;
-  modifiedObject.customer_note = customer.note;
+  modifiedObject.customerName = customer.name;
+  modifiedObject.customerAddress = customer.address;
+  modifiedObject.customerNote = customer.note;
+
+  modifiedObject.deliveryDate = new Date(
+    modifiedObject.deliveryDate
+  ).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 
   for (const productContent of modifiedObject.productContent) {
     const product = await Product.findById(productContent.productId);
