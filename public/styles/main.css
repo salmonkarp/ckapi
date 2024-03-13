@@ -1,8 +1,6 @@
 :root {
-    --background-color: rgb(34, 43, 159);
+    --background-color: rgb(243, 243, 243);
     --text-color:white;
-    --danger-color:red;
-    --primary-color:green;
 }
 
 body {

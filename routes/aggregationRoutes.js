@@ -45,6 +45,20 @@ async function aggregateObject(originalObject) {
   return modifiedObject;
 }
 
+router.get("/orderDetail", async (req, res) => {
+  try {
+    const orders = await Order.find({});
+    const modifiedOrders = await Promise.all(
+      orders.map(async (order) => {
+        return await aggregateObject(order);
+      })
+    );
+    res.status(200).json(modifiedOrders);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 router.get("/orderDetail/:id", async (req, res) => {
   try {
     const { id } = req.params;

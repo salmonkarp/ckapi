@@ -63,6 +63,10 @@ app.post("/login", (req, res) => {
   }
 });
 
+// Other Routes
+const orderRoutes = require("./siteRoutes/orderRoutes");
+app.use("/orderDashboard", orderRoutes);
+
 app.listen(port, () => {
   console.log(`Node API is running on port ${port}.`);
 });
