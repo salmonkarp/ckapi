@@ -12,7 +12,7 @@ router.get("/", (req, res) => {
   };
   let orderArray = [];
   axios
-    .get(process.env.API_URL + '/api/aggregation/orderDetail', {
+    .get('/api/aggregation/orderDetail', {
       headers,
     })
     .then((response) => {
