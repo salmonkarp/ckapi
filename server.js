@@ -3,8 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const mongoose = require("mongoose");
-const functions = require("firebase-functions");
 const app = express();
+const path = require("path");
 const authenticateApiKey = require("./authenticationMiddleware");
 
 // environment variables
@@ -12,6 +12,8 @@ const port = process.env.PORT || 3000;
 const dbHost = process.env.DB_HOST;
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
+const orderPassword = process.env.ORDER_PASSWORD;
+const invoicePassword = process.env.INVOICE_PASSWORD;
 
 
 // middleware
@@ -21,22 +23,60 @@ app.use(
   session({
     secret: "randomString",
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true },
+    saveUninitialized: true
   })
 );
 app.use(express.static("public"));
 
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "/public/views"));
 const userAuthentication = require("./userAuthentication");
 
 // // API Routes
-app.get('/', (req,res) => {
-  res.send('hello');
-})
-
 const wrapperRoute = require("./routes/wrapperRoute");
 app.use("/api", authenticateApiKey, wrapperRoute);
+
+app.get("/", (req, res) => {
+  if (req.session.user === "order") {
+    res.redirect("/orderDashboard");
+  } else if (req.session.user === "invoice") {
+    res.redirect("/invoiceDashboard");
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.post("/login", (req, res) => {
+  const { userType, password } = req.body;
+  if (userType === "order" && password === orderPassword) {
+    req.session.user = userType;
+    res.redirect("/orderDashboard");
+  } else if (userType === "invoice" && password === invoicePassword) {
+    req.session.user = userType;
+    res.redirect("/invoiceDashboard");
+  } else {
+    res.render("login");
+  }
+});
+
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error destroying session:", err);
+      return res.redirect("/");
+    }
+    res.redirect("/login");
+  });
+});
+
+// Other Routes
+const orderRoutes = require("./siteRoutes/orderRoutes");
+app.use("/orderDashboard", userAuthentication, orderRoutes);
+
 
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;
