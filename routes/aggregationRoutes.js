@@ -4,6 +4,7 @@ const Product = require("../models/productModel");
 const Hamper = require("../models/hamperModel");
 const Order = require("../models/orderModel");
 const Invoice = require("../models/invoiceModel");
+const Customer = require("../models/customerModel");
 
 router.get("/", (req, res) => {
   res.send(
@@ -26,6 +27,12 @@ router.get("/hamperDetail/:id", async (req, res) => {
 
 async function aggregateObject(originalObject) {
   const modifiedObject = { ...originalObject.toJSON() };
+
+  const customer = await Customer.findById(modifiedObject.customerId);
+  modifiedObject.customer_name = customer.name;
+  modifiedObject.customer_address = customer.address;
+  modifiedObject.customer_note = customer.note;
+
   for (const productContent of modifiedObject.productContent) {
     const product = await Product.findById(productContent.productId);
     if (product) {

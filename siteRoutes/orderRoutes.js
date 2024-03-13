@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
   };
   let orderArray = [];
   axios
-    .get("https://ckapi-gph0.onrender.com/api/order", {
+    .get("https://ckapi-gph0.onrender.com/api/aggregation/orderDetail", {
       headers,
     })
     .then((response) => {
