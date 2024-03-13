@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "serve": "node server.js",
     "dev": "nodemon temp_server.js",
-    "build": "node build"
+    "build": "node build",
+    "ckapi": "npx functions-framework --target=ckapi",
+    "deploy": "firebase deploy --only functions:ckapi"
   },
   "keywords": [],
   "author": "",
@@ -25,5 +27,8 @@
     "connect-livereload": "^0.6.1",
     "livereload": "^0.9.3",
     "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": "18"
   }
 }
