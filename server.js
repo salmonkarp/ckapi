@@ -41,17 +41,14 @@ app.use("/api", authenticateApiKey, wrapperRoute);
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;
 mongoose.connect(uri)
-  // .then(() => {
-  //   console.log("connected");
-  //   const server = app.listen(port, () => {
-  //     console.log(`Node API is running on port ${port}.`);
-  //   });
-  //   server.keepAliveTimeout = 120 * 1000;
-  //   server.headersTimeout = 120 * 1000;
-  // })
-  // .catch((error) => {
-  //   console.log(error);
-  // });
-
-
-exports.ckapi = functions.https.onRequest(app);
+  .then(() => {
+    console.log("connected");
+    const server = app.listen(port, () => {
+      console.log(`Node API is running on port ${port}.`);
+    });
+    server.keepAliveTimeout = 120 * 1000;
+    server.headersTimeout = 120 * 1000;
+  })
+  .catch((error) => {
+    console.log(error);
+  });
