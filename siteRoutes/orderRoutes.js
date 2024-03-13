@@ -4,6 +4,7 @@ const router = express.Router();
 const axios = require("axios");
 
 const api_key = process.env.API_KEY;
+const api_url = process.env.API_URL;
 
 // Dashboard
 router.get("/", (req, res) => {
@@ -12,7 +13,7 @@ router.get("/", (req, res) => {
   };
   let orderArray = [];
   axios
-    .get('/api/aggregation/orderDetail', {
+    .get(api_url+'/api/aggregation/orderDetail', {
       headers,
     })
     .then((response) => {
@@ -23,7 +24,6 @@ router.get("/", (req, res) => {
       const endIndex = startIndex + itemsPerPage;
       const slicedData = orderArray.slice(startIndex, endIndex)[0];
       const totalPages = Math.ceil(orderArray.length / itemsPerPage);
-      console.log(orderArray,slicedData);
       res.render("orderDashboard", { page, totalPages, slicedData });
     })
     .catch((error) => {
