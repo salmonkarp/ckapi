@@ -10,8 +10,9 @@
       crossorigin="anonymous"
     />
     <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
-    <link rel="stylesheet" href="../styles/orderDashboard.css" />
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../styles/orderDashboard.css" />
     <title>Product Dashboard</title>
   </head>
   <body>
@@ -48,9 +49,9 @@
     </div>
 
     <!-- Product Container -->
-    <div class="container w-sm-100 w-md-100 w-lg-100 w-xl-75">
+    <div class="container w-md-75">
       <!-- Filter -->
-      <div class="row d-flex mx-auto mt-5 mb-3 w-sm-100 w-md-100 w-lg-100 w-xl-75">
+      <div class="row d-flex mx-auto mt-5 mb-3 w-md-75">
           <div class="col-md-6 input-group  mx-auto">
               <span class="input-group-text">
                 <i class="fa-solid fa-filter"></i>
@@ -58,7 +59,7 @@
                 <input type="text" class="form-control form-floating" id="productNameFilter" placeholder="Filter by Product Name">
           </div>
       </div>
-      <div class="row d-flex mx-auto w-sm-100 w-md-100 w-lg-100 w-xl-75">
+      <div class="row d-flex mx-auto w-md-75">
           <div class="col-md-12">
               <div class="table-responsive mt-3">
                   <table class="table table-bordered align-middle text-center ">
@@ -81,8 +82,18 @@
                                   </td>
                                   <td><%= product.currentStock %></td>
                                   <td>
-                                      <button class="btn btn-primary order-button" onclick="redirect('/orderDashboard/editProduct/<%= product._id %>')">Edit</button>
-                                      <button class="btn btn-danger order-button"  onclick="redirect('/orderDashboard/deleteProduct/<%= product._id %>')">Delete</button>
+                                      <button 
+                                      class="btn btn-primary order-button btn-sm" 
+                                      onclick="redirect('/orderDashboard/editProduct/<%= product._id %>')"
+                                      >
+                                        Edit
+                                      </button>
+                                      <button 
+                                      class="btn btn-danger order-button btn-sm"  
+                                      onclick="redirect('/orderDashboard/deleteProduct/<%= product._id %>')"
+                                      >
+                                        Delete
+                                      </button>
                                   </td>
                               </tr>
                           <% }) %>

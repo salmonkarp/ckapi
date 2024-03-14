@@ -83,3 +83,11 @@
     color:white;
 }
 
+.table-responsive {
+  transform: rotateX(180deg);
+  overflow-x: auto;
+}
+
+.table {
+  transform: rotateX(180deg);
+}
