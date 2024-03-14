@@ -10,8 +10,8 @@
           crossorigin="anonymous"
         />
         <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
-        <link rel="stylesheet" href="../styles/orderDashboard.css" />
-        <title>Add Product</title>
+        <link rel="stylesheet" href="../../styles/orderDashboard.css" />
+        <title>Edit Product</title>
       </head>
     <body>
         <!-- Header -->
@@ -38,29 +38,30 @@
         <button class="btn btn-light mx-3" onclick="redirect('/logout')">Logout</button>
         </nav>
 
+
         <!-- Form -->
         <div class="container mx-auto mt-5 d-flex flex-row justify-content-center ">
             
-            <form action="/orderDashboard/addProduct" method="post" class="w-50">
-                <h1>Add Product</h1> <br>
+            <form action="/orderDashboard/editProduct/<%= productData._id %>" method="post" class="w-50">
+                <h1>Edit Product</h1> <br>
                 <div class="form-group">
                     <label for="name">Product Name</label>
-                    <input type="text" name="name" id="name" class="form-control" placeholder="Enter product name" required>
+                    <input type="text" name="name" id="name" class="form-control" placeholder="Enter product name" value="<%= productData.name %>" required>
                 </div>
                 <br>
 
                 <div class="form-group">
                     <label for="currentStock">Current Stock</label>
-                    <input type="number" min="0" name="currentStock" id="currentStock" class="form-control" placeholder="Enter current stock">
+                    <input type="number" min="0" name="currentStock" id="currentStock" class="form-control" placeholder="Enter current stock" value="<%= productData.currentStock %>">
                 </div>
                 <br>
                 
                 <div class="form-group price-group">
                     <label for="prices">Prices</label>
-                    <div class="row px-0 mx-0" id="prices">
-                        <input type="text" name="priceType1" placeholder="Price Type 1" class="form-control col" required>
-                        <input type="number" name="priceValue1" placeholder="Price Value 1" class="form-control col" required>
-                    </div>
+                    <!-- <div class="row px-0 mx-0" id="prices"> -->
+                        <!-- <input type="text" name="priceType1" placeholder="Price Type 1" class="form-control col" required>
+                        <input type="number" name="priceValue1" placeholder="Price Value 1" class="form-control col" required> -->
+                    <!-- </div> -->
                 </div>
 
                 <br>
@@ -69,6 +70,7 @@
                 <br>
                 <div class="container w-100 d-flex justify-content-end  p-0">
                     <button type="submit" class="btn btn-primary form-btn">Submit</button>
+                    <button type="button" class="btn btn-primary form-btn ms-2" onclick="redirect('/orderDashboard/products')">Cancel</button>
                 </div>
                 
             </form>
@@ -76,6 +78,9 @@
         
     </body>
     <script>
+        function redirect(domain) {
+          window.location.href = domain
+        }
         function addPrice() {
             const pricesContainer = document.querySelector('.price-group');
             const existingPairs = pricesContainer.querySelectorAll('.row.px-0.mx-0').length;
@@ -95,5 +100,40 @@
                 pricesContainer.removeChild(pricesContainer.lastChild);
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const priceGroup = document.querySelector('.price-group');
+            const orderDataPrices = <%- JSON.stringify(productData.prices) %>;
+
+            // Function to populate input fields with values from the OrderData.prices object
+            function populatePrices(pricesObject) {
+                Object.entries(pricesObject).forEach(([key, value], index) => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.classList.add('row', 'px-0', 'mx-0');
+
+                    const priceTypeInput = document.createElement('input');
+                    priceTypeInput.type = 'text';
+                    priceTypeInput.name = `priceType${index + 1}`;
+                    priceTypeInput.placeholder = `Price Type ${index + 1}`;
+                    priceTypeInput.classList.add('form-control', 'col');
+                    priceTypeInput.value = key;
+                    rowDiv.appendChild(priceTypeInput);
+
+                    const priceValueInput = document.createElement('input');
+                    priceValueInput.type = 'number';
+                    priceValueInput.name = `priceValue${index + 1}`;
+                    priceValueInput.placeholder = `Price Value ${index + 1}`;
+                    priceValueInput.classList.add('form-control', 'col');
+                    priceValueInput.value = value;
+                    rowDiv.appendChild(priceValueInput);
+
+                    priceGroup.appendChild(rowDiv);
+                });
+            }
+
+            // Call the function to populate input fields with values from OrderData.prices
+            populatePrices(orderDataPrices);
+        });
+
     </script>
 </html>

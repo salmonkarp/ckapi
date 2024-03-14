@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Product = require("../models/productModel");
+const Hamper = require("../models/hamperModel")
 
 // routes - product - get all
 router.get("/", async (req, res) => {
@@ -64,13 +65,20 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findByIdAndDelete(id);
+    const product = await Product.findById(id);
     if (!product) {
       return res
         .status(404)
         .json({ message: `cannot find product with ID ${id}` });
     }
-    res.status(200).json(product);
+
+    const hamperWithProduct = await Hamper.findOne({ "contents.productId":id });
+    if (hamperWithProduct) {
+      return res.status(400).json({ message: `Product with ${ID} is still in a hamper, cannot be deleted.`})
+    }
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    res.status(200).json(deletedProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
