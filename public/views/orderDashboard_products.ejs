@@ -62,7 +62,7 @@
       <div class="row d-flex mx-auto w-md-75">
           <div class="col-md-12">
               <div class="table-responsive mt-3">
-                  <table class="table table-bordered align-middle text-center ">
+                  <table class="table">
                       <thead>
                           <tr>
                               <th>Product Name</th>
@@ -74,7 +74,9 @@
                       <tbody>
                           <% slicedData.forEach(product => { %>
                               <tr>
-                                  <td><%= product.name %></td>
+                                  <td class="col-5">
+                                    <%= product.name %>
+                                  </td>
                                   <td>
                                       <% Object.entries(product.prices).forEach(([key, value]) => { %>
                                           <strong><%= key %>:</strong> <%= value %> <br>
@@ -82,18 +84,18 @@
                                   </td>
                                   <td><%= product.currentStock %></td>
                                   <td>
-                                      <button 
-                                      class="btn btn-primary order-button btn-sm" 
+                                    <button 
+                                      class="btn btn-primary order-button btn-sm position-sticky end-0" 
                                       onclick="redirect('/orderDashboard/editProduct/<%= product._id %>')"
                                       >
-                                        Edit
-                                      </button>
-                                      <button 
-                                      class="btn btn-danger order-button btn-sm"  
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button 
+                                      class="btn btn-danger order-button btn-sm position-sticky end-0"  
                                       onclick="redirect('/orderDashboard/deleteProduct/<%= product._id %>')"
                                       >
-                                        Delete
-                                      </button>
+                                      <i class="fa-solid fa-trash"></i>
+                                    </button>
                                   </td>
                               </tr>
                           <% }) %>
