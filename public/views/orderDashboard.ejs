@@ -67,7 +67,7 @@
     <% } %>
 
     <!-- Order Container -->
-    <div class="container mt-4 w-md-75">
+    <div class="container mt-4 w-md-75 mb-5">
       
       <div class="accordion w-sm-100 w-md-100 w-lg-100 w-xl-75 mx-auto" id="accordionExample">
         <% slicedData.forEach(order => { %>
@@ -91,7 +91,7 @@
             data-bs-parent="#accordionExample"
           >
             <div class="accordion-body position-relative">
-              <div class="container position-absolute top-0 end-0 pt-4 w-50 text-end pe-4 ps-0">
+              <div class="container button-container-1">
                 <button 
                   class="btn btn-primary order-button btn-sm position-sticky end-0" 
                   onclick="redirect('/orderDashboard/editOrder/<%= order._id %>')"
@@ -128,7 +128,7 @@
                 >
                   <thead>
                     <tr>
-                      <th>Product / Hamper Name</th>
+                      <th>Name</th>
                       <th>Price</th>
                       <th>Quantity</th>
                       <th>Subtotal</th>
@@ -148,7 +148,7 @@
                           <td><%= product.priceValue %> (<%= product.priceType %>) <br> -  <%= discountValue %> (<%= product.discount %>%) <br> = <%= subtotal %></td>
                         <% } %>
                         <td><%= product.quantity.$numberDecimal %></td>
-                        <td>Rp <%= subtotal * product.quantity.$numberDecimal %></td>
+                        <td>Rp<%= subtotal * product.quantity.$numberDecimal %></td>
                         <% total += subtotal * product.quantity.$numberDecimal; %>
                       </tr>
                     <% }) %>
@@ -164,7 +164,7 @@
                           <td><%= product.priceValue %> (<%= product.priceType %>) <br> -  <%= discountValue %> (<%= product.discount %>%) <br> = <%= subtotal %></td>
                         <% } %>
                         <td><%= product.quantity.$numberDecimal %></td>
-                        <td>Rp <%= subtotal * product.quantity.$numberDecimal %></td>
+                        <td>Rp<%= subtotal * product.quantity.$numberDecimal %></td>
                         <% total += subtotal * product.quantity.$numberDecimal; %>
                       </tr>
                     <% }) %>
@@ -172,17 +172,17 @@
                     
                     <tr>
                       <td colspan="3" style="text-align: right;"><strong>Total</strong></td>
-                      <td>Rp <%= total %></td>
+                      <td>Rp<%= total %></td>
                     </tr>
 
                     <% if(order.orderDiscount !== 0) { %>
                       <tr>
                         <td colspan="3" style="text-align: right;"><strong>Discount (<%= order.orderDiscount %>%)</strong></td>
-                        <td>Rp <%= parseInt(order.orderDiscount * total / 100) %></td>
+                        <td>Rp<%= parseInt(order.orderDiscount * total / 100) %></td>
                       </tr>
                       <tr>
                         <td colspan="3" style="text-align: right;"><strong>Final Total</strong></td>
-                        <td>Rp <%= total - parseInt(order.orderDiscount * total / 100) %></td>
+                        <td>Rp<%= total - parseInt(order.orderDiscount * total / 100) %></td>
                       </tr>
                     <% } %>
                   </tbody>

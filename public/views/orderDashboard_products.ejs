@@ -49,7 +49,7 @@
     </div>
 
     <!-- Product Container -->
-    <div class="container w-md-75">
+    <div class="container w-md-75 mb-5">
       <!-- Filter -->
       <div class="row d-flex mx-auto mt-5 mb-3 w-md-75">
           <div class="col-md-6 input-group  mx-auto">
@@ -74,7 +74,7 @@
                       <tbody>
                           <% slicedData.forEach(product => { %>
                               <tr>
-                                  <td class="col-5">
+                                  <td class="col-4">
                                     <%= product.name %>
                                   </td>
                                   <td>
@@ -83,7 +83,7 @@
                                       <% }) %>
                                   </td>
                                   <td><%= product.currentStock %></td>
-                                  <td>
+                                  <td class="col-3">
                                     <button 
                                       class="btn btn-primary order-button btn-sm position-sticky end-0" 
                                       onclick="redirect('/orderDashboard/editProduct/<%= product._id %>')"

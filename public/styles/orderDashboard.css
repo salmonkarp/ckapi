@@ -91,3 +91,23 @@
 .table {
   transform: rotateX(180deg);
 }
+
+.button-container-1{
+  position:absolute;
+  width:calc(100% - 40px);
+  display:flex;
+  flex-direction: row;
+  justify-content: end;
+  gap:10px;
+  padding:0;
+  
+
+  @media (max-width:576px) {
+    position:relative;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom:10px;
+  }
+}
