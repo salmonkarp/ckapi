@@ -16,10 +16,13 @@
   <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+      <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto px-3">
           <li class="nav-item active">
-            <a href="/orderDashboard" class="nav-link">Home</a>
+            <a href="/orderDashboard" class="nav-link">Orders</a>
           </li>
           <li class="nav-item">
             <a href="/orderDashboard/products" class="nav-link">Products</a>
@@ -39,14 +42,15 @@
     <h1 class="w-100 text-center mt-5 mb-4">Order Dashboard</h1>
 
     <!-- Add Order Button Container -->
-    <div class="container mt-4 w-50 d-flex justify-content-center ">
+    <div class="container mt-4 d-flex justify-content-center ">
       <button class="btn btn-primary text-center w-25" onclick="redirect('/addOrder')">Add Order</button>
     </div>
 
     <!-- Page Selector -->
+    <% if(totalPages > 1) { %>
     <div class="container mx-auto mt-3 w-50">
       <nav aria-label="Page navigation" class="mx-auto">
-        <ul class="pagination">
+        <ul class="pagination justify-content-center ">
           <% if(page > 1) { %>
           <li class="page-item"><a class="page-link" href="?page=<%= page-1 %>">Previous</a></li>
           <% } %>
@@ -59,6 +63,7 @@
         </ul>
       </nav>
     </div>
+    <% } %>
 
     <!-- Order Container -->
     <div class="container mt-4 w-50">
@@ -71,15 +76,15 @@
               class="accordion-button collapsed"
               type="button"
               data-bs-toggle="collapse"
-              data-bs-target="#collapseOne"
+              data-bs-target="#collapse<%= order._id %>"
               aria-expanded="true"
-              aria-controls="collapseOne"
+              aria-controls="collapse<%= order._id %>"
             >
               Order by <%= order.customerName%> due on <%= order.deliveryDate %>
             </button>
           </h2>
           <div
-            id="collapseOne"
+            id="collapse<%= order._id %>"
             class="accordion-collapse collapse"
             aria-labelledby="headingOne"
             data-bs-parent="#accordionExample"
@@ -186,6 +191,9 @@
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"
   ></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script>
     function redirect(domain) {
       window.location.href = domain

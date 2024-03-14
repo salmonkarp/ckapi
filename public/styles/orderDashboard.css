@@ -2,7 +2,11 @@
     font-size: 1.3rem;
 }
 
-.order-button{
+.order-button, .form-btn{
     font-size:1rem;
+}
+
+.nav-item.active > a{
+    color:white;
 }
 
