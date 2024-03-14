@@ -111,3 +111,12 @@
     margin-bottom:10px;
   }
 }
+
+.product-options {
+  @media (max-width:576px) {
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    width:100%;
+  }
+}
