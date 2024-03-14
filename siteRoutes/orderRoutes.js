@@ -2,15 +2,17 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const handleProductForm = require("../helper_functions/handleProduct");
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
 
+const headers = {
+  "x-api-key": api_key,
+};
+
 // Order Dashboard
 router.get("/", (req, res) => {
-  const headers = {
-    "x-api-key": api_key,
-  };
   let orderArray = [];
   axios
     .get(api_url+'/api/aggregation/orderDetail', {
@@ -35,9 +37,6 @@ router.get("/", (req, res) => {
 
 // Products Dashboard
 router.get("/products", (req, res) => {
-  const headers = {
-    "x-api-key": api_key,
-  };
   let orderArray = [];
   axios
     .get(api_url+'/api/product', {
@@ -62,6 +61,38 @@ router.get("/products", (req, res) => {
 // Add Product
 router.get("/addProduct", (req,res) => {
   res.render("productViews/addProduct");
+})
+
+// Add Product Handling
+router.post("/addProduct", (req,res) => {
+  OrderObject = handleProductForm(req.body);
+  console.log(OrderObject);
+  axios
+    .post(api_url+'/api/product', OrderObject, {
+      headers,
+    })
+    .then((response) => {
+      res.redirect('/orderDashboard/products')
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error");
+    });
+})
+
+// Edit Product
+router.get("/editProduct/:id", (req,res) => {
+  axios
+    .get(api_url+`/api/product/${req.params.id}`, {
+      headers,
+    })
+    .then((response) => {
+      res.render("editProduct", {response});
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error");
+    });
 })
 
 
