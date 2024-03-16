@@ -5,7 +5,7 @@ const session = require("express-session");
 const mongoose = require("mongoose");
 const app = express();
 const path = require("path");
-const authenticateApiKey = require("./authenticationMiddleware");
+const authenticateApiKey = require("./helper_functions/authenticationMiddleware");
 
 // environment variables
 const port = process.env.PORT || 3000;
@@ -30,7 +30,7 @@ app.use(express.static("public"));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/public/views"));
-const userAuthentication = require("./userAuthentication");
+const userAuthentication = require("./helper_functions/userAuthentication");
 
 // // API Routes
 const wrapperRoute = require("./routes/wrapperRoute");

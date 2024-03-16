@@ -75,20 +75,22 @@
     font-size: 1.3rem;
 }
 
+
 .order-button, .form-btn{
     font-size:1rem;
 }
 
 .nav-item.active > a{
     color:white;
+    font-weight: 500;
 }
 
-.table-responsive {
+.flipped-container {
   transform: rotateX(180deg);
   overflow-x: auto;
 }
 
-.table {
+.flipped {
   transform: rotateX(180deg);
 }
 

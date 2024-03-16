@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
+    <link rel="stylesheet" href="../styles/orderDashboard.css" />
+    <title>Add Hamper</title>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+      <button
+        class="navbar-toggler ms-3"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto px-3">
+          <li class="nav-item">
+            <a href="/orderDashboard" class="nav-link">Orders</a>
+          </li>
+          <li class="nav-item">
+            <a href="/orderDashboard/products" class="nav-link">Products</a>
+          </li>
+          <li class="nav-item">
+            <a href="/orderDashboard/hampers" class="nav-link">Hampers</a>
+          </li>
+          <li class="nav-item">
+            <a href="/orderDashboard/customers" class="nav-link">Customers</a>
+          </li>
+        </ul>
+      </div>
+      <button class="btn btn-light mx-3" onclick="redirect('/logout')">
+        Logout
+      </button>
+    </nav>
+
+    <!-- Form -->
+    <div class="container mx-auto mt-5 d-flex flex-row justify-content-center">
+      <form action="/orderDashboard/addHamper" method="post" class="w-lg-50">
+        <h1>Add Hamper</h1>
+        <br />
+
+        <!-- Name -->
+        <div class="form-group">
+          <label for="name">Hamper Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            class="form-control"
+            placeholder="Enter hamper name"
+            required
+          />
+        </div>
+        <br />
+
+        <!-- Contents -->
+        <div class="form-group">
+          <label for="contents">Contents</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col-6 mx-0 px-0 pe-2">
+              <select
+                name="contentInput"
+                id="contentInput"
+                class="form-select"
+                data-placeholder="Choose a product"
+              >
+                <option disabled selected value="null">Select a product</option>
+                <% slicedData.forEach(product => { %>
+                <option value="<%= product._id %>"><%= product.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-5 mx-0 px-0 pe-2">
+              <input
+                type="number"
+                name="quantityInput"
+                class="form-control col"
+                id="quantityInput"
+                placeholder="Quantity"
+              />
+            </div>
+            <div class="col-1 mx-0 px-0">
+              <button
+                class="btn btn-primary btn-sm form-control"
+                type="button"
+                onclick="addProductToHamper()"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <br />
+          <!-- Current Contents -->
+          <div class="container table-responsive">
+            <table class="table realContents w-75 mx-auto">
+              <tbody
+                class="realContentsBody text-center align-content-center border-top"
+              ></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Prices -->
+        <div class="form-group price-group">
+          <label for="prices">Prices</label>
+          <div class="row mx-0 gap-2" id="prices">
+            <input
+              type="text"
+              name="priceType1"
+              placeholder="Price Type 1"
+              class="form-control col"
+              required
+            />
+            <input
+              type="number"
+              name="priceValue1"
+              placeholder="Price Value 1"
+              class="form-control col"
+              required
+            />
+          </div>
+        </div>
+
+        <br />
+
+        <!-- Add/Remove Price Buttons -->
+        <button
+          class="btn btn-secondary form-btn"
+          onclick="addPrice()"
+          type="button"
+        >
+          Add Price Field
+        </button>
+        <button
+          class="btn btn-secondary form-btn"
+          onclick="removePrice()"
+          type="button"
+        >
+          Remove Price Field
+        </button>
+
+        <br />
+        <br />
+
+        <!-- Submit Buttons -->
+        <div class="container w-100 d-flex justify-content-end p-0">
+          <button type="submit" class="btn btn-primary form-btn">Submit</button>
+          <button
+            type="button"
+            class="btn btn-primary form-btn ms-2"
+            onclick="redirect('/orderDashboard/products')"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+  <script>
+    function redirect(domain) {
+      window.location.href = domain;
+    }
+
+    function addPrice() {
+      const pricesContainer = document.querySelector(".price-group");
+      const existingPairs = pricesContainer.querySelectorAll(".row").length;
+      const newPricePair = document.createElement("div");
+      newPricePair.classList.add("row", "px-0", "mx-0", "gap-2");
+      newPricePair.innerHTML = `
+                  <input type="text" name="priceType${
+                    existingPairs + 1
+                  }" placeholder="Price Type ${
+        existingPairs + 1
+      }" class="form-control col" required>
+                  <input type="number" name="priceValue${
+                    existingPairs + 1
+                  }" placeholder="Price Value ${
+        existingPairs + 1
+      }" class="form-control col" required>
+              `;
+      pricesContainer.appendChild(newPricePair);
+    }
+
+    function removePrice() {
+      const pricesContainer = document.querySelector(".price-group");
+      const existingPairs = pricesContainer.querySelectorAll(".row").length;
+      if (existingPairs > 1) {
+        pricesContainer.removeChild(pricesContainer.lastChild);
+      }
+    }
+
+    $("#contentInput").select2({
+      theme: "bootstrap-5",
+      width: $(this).data("width")
+        ? $(this).data("width")
+        : $(this).hasClass("w-100")
+        ? "100%"
+        : "style",
+      placeholder: $(this).data("placeholder"),
+    });
+
+    function addProductToHamper() {
+      var selectedProductId = document.getElementById("contentInput").value;
+      console.log(selectedProductId);
+      var selectedProductName =
+        document.getElementById("contentInput").options[
+          document.getElementById("contentInput").selectedIndex
+        ].text;
+      var quantity = parseFloat(document.getElementById("quantityInput").value);
+      if (
+        !selectedProductId ||
+        isNaN(quantity) ||
+        quantity <= 0 ||
+        selectedProductId === "null"
+      ) {
+        alert("Please select a product and enter a valid quantity.");
+        return;
+      }
+
+      document.getElementById("quantityInput").value = "";
+
+      var realContents = document.querySelector(".realContentsBody");
+
+      var newProductEntry = document.createElement("tr");
+
+      var nameColumn = document.createElement("td");
+      var quantityColumn = document.createElement("td");
+      var deleteColumn = document.createElement("td");
+
+      nameColumn.innerHTML = selectedProductName;
+      quantityColumn.innerHTML = quantity;
+      deleteColumn.innerHTML = `
+      <button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+      <input type="hidden" name="contents[]" value="${selectedProductId}">
+      `;
+
+      nameColumn.classList.add("col-7", "align-middle", "text-start");
+      quantityColumn.classList.add("col-3", "align-middle");
+      deleteColumn.classList.add("col-2", "align-middle");
+
+      newProductEntry.appendChild(nameColumn);
+      newProductEntry.appendChild(quantityColumn);
+      newProductEntry.appendChild(deleteColumn);
+
+      realContents.appendChild(newProductEntry);
+
+      const value_to_remove = document.querySelector(
+        `option[value="${selectedProductId}"]`
+      );
+      console.log(value_to_remove, "removed");
+      value_to_remove.remove();
+      document.getElementById("contentInput").value = "null";
+    }
+
+    function removeThisProduct(el) {
+      trElement = el.parentElement.parentElement;
+      productId = el.nextElementSibling.value;
+      console.log(el.nextElementSibling.value);
+      productName = trElement.querySelector(".col-7").innerHTML;
+
+      newOption = document.createElement("option");
+      newOption.value = productId;
+      newOption.text = productName;
+
+      selectElement = document.getElementById("contentInput");
+      selectElement.add(newOption);
+
+      var options = Array.from(selectElement.options);
+      options.sort(function (a, b) {
+        return a.text.localeCompare(b.text);
+      });
+
+      selectElement.innerHTML = "";
+      options.forEach(function (option) {
+        selectElement.add(option);
+      });
+      productId = trElement.remove();
+    }
+  </script>
+</html>
