@@ -20,7 +20,6 @@ router.get("/hamperDetail", async (req, res) => {
         return await hamper.populate("contents.productId", "name");
       })
     );
-    console.log(modifiedHampers);
     res.status(200).json({ modifiedHampers });
   } catch (error) {
     res.status(500).json({ message: error });

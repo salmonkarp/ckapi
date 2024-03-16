@@ -15,7 +15,6 @@ const dbPassword = process.env.DB_PASSWORD;
 const orderPassword = process.env.ORDER_PASSWORD;
 const invoicePassword = process.env.INVOICE_PASSWORD;
 
-
 // middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,7 +22,7 @@ app.use(
   session({
     secret: "randomString",
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
   })
 );
 app.use(express.static("public"));
@@ -73,14 +72,19 @@ app.get("/logout", (req, res) => {
   });
 });
 
+app.get("/error", (req, res) => {
+  let error = "";
+  res.render("error", { error });
+});
+
 // Other Routes
 const orderRoutes = require("./siteRoutes/orderRoutes");
 app.use("/orderDashboard", userAuthentication, orderRoutes);
 
-
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;
-mongoose.connect(uri)
+mongoose
+  .connect(uri)
   .then(() => {
     console.log("connected");
     const server = app.listen(port, () => {
