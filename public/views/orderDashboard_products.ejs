@@ -19,6 +19,7 @@
       referrerpolicy="no-referrer"
     />
     <link rel="stylesheet" href="../styles/orderDashboard.css" />
+    <link rel="shortcut icon" href="../icon.png" type="image/x-icon" />
     <title>Product Dashboard</title>
   </head>
   <body>
@@ -57,7 +58,7 @@
     </nav>
 
     <!-- Title -->
-    <h1 class="w-100 text-center mt-5 mb-4">Product Dashboard</h1>
+    <h1 class="w-100 text-center mt-5 mb-4">Product Dashboard🍪</h1>
 
     <!-- Add Order Button Container -->
     <div class="container mt-4 d-flex justify-content-center">
@@ -93,22 +94,22 @@
                 <tr>
                   <th>Product Name</th>
                   <th>Product Prices</th>
-                  <th>Current Stock</th>
-                  <th>Options</th>
+                  <th class="text-center">Current Stock</th>
+                  <th class="text-center">Options</th>
                 </tr>
               </thead>
               <tbody>
                 <% slicedData.forEach(product => { %>
                 <tr>
-                  <td class="col-4"><%= product.name %></td>
-                  <td>
+                  <td class="col-5"><%= product.name %></td>
+                  <td class="col-2">
                     <% Object.entries(product.prices).forEach(([key, value]) =>
                     { %>
                     <strong><%= key %>:</strong> <%= value %> <br />
                     <% }) %>
                   </td>
-                  <td><%= product.currentStock %></td>
-                  <td class="col-3">
+                  <td class="col-3 text-center"><%= product.currentStock %></td>
+                  <td class="col-2 text-center">
                     <div class="product-options">
                       <button
                         class="btn btn-primary order-button btn-sm position-sticky end-0"
