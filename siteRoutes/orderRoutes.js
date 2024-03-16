@@ -56,14 +56,12 @@ router.get("/products", (req, res) => {
 
 // Hamper Dashboard
 router.get("/hampers", (req, res) => {
-  let hamperArray = [];
   axios
-    .get(api_url + "/api/hamper", {
+    .get(api_url + "/api/aggregation/hamperDetail", {
       headers,
     })
     .then((response) => {
-      hamperArray.push(response.data);
-      const slicedData = hamperArray[0];
+      const slicedData = response.data.modifiedHampers;
       slicedData.sort((a, b) => a.name.localeCompare(b.name));
       res.render("orderDashboard_hampers", { slicedData });
     })

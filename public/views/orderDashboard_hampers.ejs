@@ -98,10 +98,18 @@
               <tbody>
                 <% slicedData.forEach(hamper => { %>
                 <tr>
-                  <td class="col-4"><%= hamper.name %></td>
-                  <td>contents</td>
-                  <td><%= hamper.currentStock %></td>
-                  <td class="col-3">
+                  <td class="col-2"><%= hamper.name %></td>
+                  <td class="col-2">
+                    <% Object.entries(hamper.prices).forEach(([key, value]) => {
+                    %> <strong><%= key %>:</strong> <%= value %> <br />
+                    <% }) %>
+                  </td>
+                  <td class="col-4">
+                    <% hamper.contents.forEach((product) => { %> <%=
+                    product.productId.name %> x <%= product.quantity %> <br />
+                    <% }) %>
+                  </td>
+                  <td class="col-1">
                     <div class="product-options">
                       <button
                         class="btn btn-primary order-button btn-sm position-sticky end-0"

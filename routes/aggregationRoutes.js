@@ -12,11 +12,26 @@ router.get("/", (req, res) => {
   );
 });
 
+router.get("/hamperDetail", async (req, res) => {
+  try {
+    const hampers = await Hamper.find({});
+    const modifiedHampers = await Promise.all(
+      hampers.map(async (hamper) => {
+        return await hamper.populate("contents.productId", "name");
+      })
+    );
+    console.log(modifiedHampers);
+    res.status(200).json({ modifiedHampers });
+  } catch (error) {
+    res.status(500).json({ message: error });
+  }
+});
+
 router.get("/hamperDetail/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const hamperDetail = await Hamper.findById(id).populate(
-      "contents.product_id",
+      "contents.productId",
       "name"
     );
     res.status(200).json({ hamperDetail });

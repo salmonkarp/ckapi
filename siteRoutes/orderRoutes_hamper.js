@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const handleProductForm = require("../helper_functions/handleProduct");
+const handleHamperForm = require("../helper_functions/handleHamper");
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
@@ -11,7 +11,7 @@ const headers = {
   "x-api-key": api_key,
 };
 
-// Add Product
+// Add Hamper
 router.get("/addHamper", (req, res) => {
   // querying products to fill in for contents
   let productArray = [];
@@ -27,6 +27,23 @@ router.get("/addHamper", (req, res) => {
     })
     .catch((error) => {
       console.error(error);
+      res.render("error", { error });
+    });
+});
+
+// Add Hamper Handling
+router.post("/addHamper", (req, res) => {
+  const hamperObject = handleHamperForm(req.body);
+  console.log(hamperObject);
+  axios
+    .post(api_url + "/api/hamper", hamperObject, {
+      headers,
+    })
+    .then((response) => {
+      res.redirect("/orderDashboard/hampers");
+    })
+    .catch((error) => {
+      console.log(error);
       res.render("error", { error });
     });
 });

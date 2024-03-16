@@ -66,7 +66,12 @@
 
     <!-- Form -->
     <div class="container mx-auto mt-5 d-flex flex-row justify-content-center">
-      <form action="/orderDashboard/addHamper" method="post" class="w-lg-50">
+      <form
+        action="/orderDashboard/addHamper"
+        method="post"
+        class="w-lg-50"
+        id="myForm"
+      >
         <h1>Add Hamper</h1>
         <br />
 
@@ -178,7 +183,13 @@
 
         <!-- Submit Buttons -->
         <div class="container w-100 d-flex justify-content-end p-0">
-          <button type="submit" class="btn btn-primary form-btn">Submit</button>
+          <button
+            type="button"
+            class="btn btn-primary form-btn"
+            onclick="validateContents()"
+          >
+            Submit
+          </button>
           <button
             type="button"
             class="btn btn-primary form-btn ms-2"
@@ -265,7 +276,7 @@
       var deleteColumn = document.createElement("td");
 
       nameColumn.innerHTML = selectedProductName;
-      quantityColumn.innerHTML = quantity;
+      quantityColumn.innerHTML = `${quantity} <input type="hidden" name="quantities[]" value="${quantity}">`;
       deleteColumn.innerHTML = `
       <button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)">
         <i class="fa-solid fa-trash"></i>
@@ -314,6 +325,18 @@
         selectElement.add(option);
       });
       productId = trElement.remove();
+    }
+
+    function validateContents() {
+      let contents = document.querySelector(".realContentsBody");
+      if (!document.querySelector("#myForm").reportValidity()) {
+        return;
+      }
+      if (contents.children.length) {
+        document.querySelector("form").submit();
+      } else {
+        alert("Contents must have at least one product!");
+      }
     }
   </script>
 </html>

@@ -44,6 +44,12 @@ const hamperSchema = mongoose.Schema(
     },
     contents: {
       type: [contentSchema],
+      validate: {
+        validator: function (contents) {
+          return contents.length > 0;
+        },
+        message: "Hamper must at least contain one item",
+      },
       required: true,
     },
   },

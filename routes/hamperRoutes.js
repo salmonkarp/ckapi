@@ -24,7 +24,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// routes - hamper - insert by id
+// routes - hamper - insert
 router.post("/", async (req, res) => {
   try {
     const hamper = await Hamper.create(req.body);
