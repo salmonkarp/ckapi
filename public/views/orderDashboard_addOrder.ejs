@@ -65,64 +65,138 @@
       </button>
     </nav>
 
-    <!-- Form -->
-    <div class="container mx-auto mt-5 d-flex flex-row justify-content-center">
+    <!-- Wrapper -->
+    <div class="container mx-auto mt-5 row mb-5 px-0">
+      <!-- Form -->
       <form
         action="/orderDashboard/addHamper"
         method="post"
-        class="w-lg-50"
+        class="w-lg-50 col"
+        style="max-width: 40%"
         id="myForm"
       >
-        <h1>➕Add Order</h1>
+        <h1>➕Add Order🧾</h1>
         <br />
 
-        <!-- Name -->
-        <div class="form-group">
-          <label for="name">Hamper Name</label>
+        <!-- Select Option for Customer -->
+        <div
+          class="btn-group"
+          role="group"
+          aria-label="Basic radio toggle button group"
+          onchange="changeCustomerType()"
+        >
           <input
-            type="text"
-            name="name"
-            id="name"
-            class="form-control"
-            placeholder="Enter hamper name"
-            required
+            type="radio"
+            class="btn-check"
+            name="customerType"
+            value="existing"
+            id="btnradio1"
+            autocomplete="off"
+            checked
           />
+          <label class="btn btn-outline-primary order-button" for="btnradio1"
+            >Existing Customer</label
+          >
+
+          <input
+            type="radio"
+            class="btn-check"
+            name="customerType"
+            value="new"
+            id="btnradio2"
+            autocomplete="off"
+          />
+          <label class="btn btn-outline-primary order-button" for="btnradio2"
+            >New Customer</label
+          >
         </div>
         <br />
+        <br />
 
-        <!-- Contents -->
+        <!-- Existing Customer Selector -->
+        <div class="form-group existingCustomerContainer">
+          <label for="existingCustomer" class="form-label"
+            >Existing Customer</label
+          >
+          <select
+            class="form-select"
+            name="existingCustomer"
+            id="existingCustomer"
+          >
+            <option disabled selected>Select existing customer</option>
+            <% customers.forEach(customer => { %>
+            <option value="<%= customer._id %>"><%= customer.name %></option>
+            <% }) %>
+          </select>
+          <br />
+        </div>
+
+        <!-- New Customer Container -->
+        <div class="newCustomerContainer" hidden>
+          <!-- <hr class="mt-2" /> -->
+          <div class="form-group">
+            <label for="customerName" class="form-label">Customer Name</label>
+            <input
+              type="text"
+              class="form-control"
+              name="customerName"
+              id="customerName"
+              placeholder="Enter Customer Name"
+            />
+          </div>
+          <br />
+          <div class="form-group">
+            <label for="customerAddress" class="form-label"
+              >Customer Address</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              name="customerAddress"
+              id="customerAddress"
+              placeholder="Enter Customer Address"
+            />
+          </div>
+          <br />
+          <div class="form-group">
+            <label for="customerNote" class="form-label">Customer Note</label>
+            <input
+              type="text"
+              class="form-control"
+              name="customerNote"
+              id="customerNote"
+              placeholder="Enter Customer Note"
+            />
+          </div>
+          <br />
+          <!-- <hr class="mt-2" /> -->
+        </div>
+
+        <!-- Product Contents -->
         <div class="form-group">
-          <label for="contents">Contents</label>
+          <label for="contents">Product Contents</label>
 
           <!-- Selector -->
           <div class="row m-0">
             <div class="col mx-0 px-0 pe-2">
               <select
-                name="contentInput"
-                id="contentInput"
+                name="productContentInput"
+                id="productContentInput"
                 class="form-select"
                 data-placeholder="Choose a product"
+                onchange="advanceTab(this)"
               >
                 <option disabled selected value="null">Select a product</option>
-                <% slicedData.forEach(product => { %>
+                <% products.forEach(product => { %>
                 <option value="<%= product._id %>"><%= product.name %></option>
                 <% }) %>
               </select>
             </div>
-            <!-- <div class="col-4 col-sm-5 mx-0 px-0 pe-2">
-              <input
-                type="number"
-                name="quantityInput"
-                class="form-control col"
-                id="quantityInput"
-                placeholder="Quantity"
-              />
-            </div> -->
             <div class="col-2 col-sm-1 mx-0 px-0">
               <button
-                class="btn btn-primary btn-sm form-control"
+                class="btn btn-primary btn-sm form-control specialFocus"
                 type="button"
-                onclick="addProductToHamper()"
+                onclick="addProductToOrder()"
               >
                 <i class="fa-solid fa-plus"></i>
               </button>
@@ -130,56 +204,67 @@
           </div>
 
           <br />
-          <!-- Current Contents -->
-          <div class="container table-responsive">
-            <table class="table realContents w-75 mx-auto">
-              <tbody
-                class="realContentsBody text-center align-content-center border-top"
-              ></tbody>
-            </table>
-          </div>
         </div>
 
-        <!-- Prices -->
-        <div class="form-group price-group">
-          <label for="prices">Prices</label>
-          <div class="row mx-0 gap-2" id="prices">
-            <input
-              type="text"
-              name="priceType1"
-              placeholder="Price Type 1"
-              class="form-control col"
-              required
-            />
-            <input
-              type="number"
-              name="priceValue1"
-              placeholder="Price Value 1"
-              class="form-control col"
-              required
-            />
+        <!-- Hamper Contents -->
+        <div class="form-group">
+          <label for="contents">Hamper Contents</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col mx-0 px-0 pe-2">
+              <select
+                name="hamperContentInput"
+                id="hamperContentInput"
+                class="form-select"
+                data-placeholder="Choose a hamper"
+                onchange="advanceTab(this)"
+              >
+                <option disabled selected value="null">Select a hamper</option>
+                <% hampers.forEach(hamper => { %>
+                <option value="<%= hamper._id %>"><%= hamper.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-2 col-sm-1 mx-0 px-0">
+              <button
+                class="btn btn-primary btn-sm form-control specialFocus"
+                type="button"
+                onclick="addProductToOrder()"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
           </div>
+
+          <br />
         </div>
 
+        <!-- Order Discount -->
+        <div class="form-group">
+          <label for="orderDiscount" class="form-label">Order Discount</label>
+          <input
+            type="number"
+            class="form-control"
+            name="orderDiscount"
+            id="orderDiscount"
+            placeholder="Enter Order Discount"
+          />
+        </div>
         <br />
 
-        <!-- Add/Remove Price Buttons -->
-        <button
-          class="btn btn-secondary form-btn"
-          onclick="addPrice()"
-          type="button"
-        >
-          Add Price Field
-        </button>
-        <button
-          class="btn btn-secondary form-btn"
-          onclick="removePrice()"
-          type="button"
-        >
-          Remove Price Field
-        </button>
+        <!-- Order Note -->
+        <div class="form-group">
+          <label for="orderNote" class="form-label">Order Note</label>
+          <input
+            type="text"
+            class="form-control"
+            name="orderNote"
+            id="orderNote"
+            placeholder="Enter Order Note"
+          />
+        </div>
 
-        <br />
         <br />
 
         <!-- Submit Buttons -->
@@ -200,8 +285,33 @@
           </button>
         </div>
       </form>
+
+      <!-- Order Display -->
+      <div class="container col border-start ms-5 ps-5">
+        <h3 class="text-center">Order Contents✍️</h3>
+        <div class="container table-responsive mt-4 px-0">
+          <table
+            class="table realContents w-100 mx-auto text-center align-middle"
+            onchange="updateTable()"
+          >
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Price Type</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody
+              class="realContentsBody align-content-center border-top"
+            ></tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </body>
+
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
@@ -210,35 +320,28 @@
       window.location.href = domain;
     }
 
-    function addPrice() {
-      const pricesContainer = document.querySelector(".price-group");
-      const existingPairs = pricesContainer.querySelectorAll(".row").length;
-      const newPricePair = document.createElement("div");
-      newPricePair.classList.add("row", "px-0", "mx-0", "gap-2");
-      newPricePair.innerHTML = `
-                  <input type="text" name="priceType${
-                    existingPairs + 1
-                  }" placeholder="Price Type ${
-        existingPairs + 1
-      }" class="form-control col" required>
-                  <input type="number" name="priceValue${
-                    existingPairs + 1
-                  }" placeholder="Price Value ${
-        existingPairs + 1
-      }" class="form-control col" required>
-              `;
-      pricesContainer.appendChild(newPricePair);
-    }
-
-    function removePrice() {
-      const pricesContainer = document.querySelector(".price-group");
-      const existingPairs = pricesContainer.querySelectorAll(".row").length;
-      if (existingPairs > 1) {
-        pricesContainer.removeChild(pricesContainer.lastChild);
+    function changeCustomerType() {
+      let customerType = document.querySelector(
+        "input[name='customerType']:checked"
+      ).value;
+      if (customerType === "new") {
+        document
+          .querySelector(".newCustomerContainer")
+          .removeAttribute("hidden");
+        document
+          .querySelector(".existingCustomerContainer")
+          .setAttribute("hidden", true);
+      } else {
+        document
+          .querySelector(".newCustomerContainer")
+          .setAttribute("hidden", true);
+        document
+          .querySelector(".existingCustomerContainer")
+          .removeAttribute("hidden");
       }
     }
 
-    $("#contentInput").select2({
+    $("#existingCustomer").select2({
       theme: "bootstrap-5",
       width: $(this).data("width")
         ? $(this).data("width")
@@ -248,77 +351,87 @@
       placeholder: $(this).data("placeholder"),
     });
 
-    function addProductToHamper() {
-      var selectedProductId = document.getElementById("contentInput").value;
-      var selectedProductName =
-        document.getElementById("contentInput").options[
-          document.getElementById("contentInput").selectedIndex
-        ].text;
-      // var quantity = parseFloat(document.getElementById("quantityInput").value);
+    $("#productContentInput").select2({
+      theme: "bootstrap-5",
+      width: $(this).data("width")
+        ? $(this).data("width")
+        : $(this).hasClass("w-100")
+        ? "100%"
+        : "style",
+      placeholder: $(this).data("placeholder"),
+    });
+
+    $("#hamperContentInput").select2({
+      theme: "bootstrap-5",
+      width: $(this).data("width")
+        ? $(this).data("width")
+        : $(this).hasClass("w-100")
+        ? "100%"
+        : "style",
+      placeholder: $(this).data("placeholder"),
+    });
+
+    function advanceTab(el) {
+      let nextBtn = el.parentElement.parentElement.querySelector(".btn");
+      console.log(nextBtn);
+      nextBtn.setAttribute("tabIndex", "0");
+      setTimeout(function () {
+        nextBtn.focus();
+      }, 20);
+    }
+
+    function addProductToOrder() {
+      var selectedProductId = document.getElementById(
+        "productContentInput"
+      ).value;
+      var selectedProductName = document.getElementById("productContentInput")
+        .options[document.getElementById("productContentInput").selectedIndex]
+        .text;
+
       if (!selectedProductId || selectedProductId === "null") {
         alert("Please select a product and enter a product.");
         return;
       }
 
-      // document.getElementById("quantityInput").value = "";
-
       var realContents = document.querySelector(".realContentsBody");
-
       var newProductEntry = document.createElement("tr");
 
-      var nameColumn = document.createElement("td");
-      var quantityColumn = document.createElement("td");
-      var deleteColumn = document.createElement("td");
+      var columns = [
+        { content: selectedProductName, classNames: ["col-3"] },
+        {
+          content: getPriceInput(selectedProductId),
+          classNames: ["col-3"],
+        },
+        {
+          content:
+            '<input type="number" class="form-control text-center w-75 mx-auto" name="quantities[]" value="1">',
+          classNames: ["col-2", "text-center", "px-4"],
+        },
+        { content: "", classNames: ["col"] },
+        {
+          content:
+            '<button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)"><i class="fa-solid fa-trash"></i></button><input type="hidden" name="contents[]" value="' +
+            selectedProductId +
+            '">',
+          classNames: ["col-1", "text-center"],
+        },
+      ];
 
-      nameColumn.innerHTML = selectedProductName;
-      quantityColumn.innerHTML = 1;
-      deleteColumn.innerHTML = `
-      <button class="btn btn-success btn-sm" type="button" onclick="addQuantity(this)">
-        <i class="fa-solid fa-plus"></i>
-      </button>
-      <button class="btn btn-danger btn-sm" type="button" onclick="decreaseQuantity(this)">
-        <i class="fa-solid fa-minus"></i>
-      </button>
-      <input type="hidden" name="quantities[]" value=1>
-      <input type="hidden" name="contents[]" value="${selectedProductId}">
-      `;
-
-      nameColumn.classList.add("col-6", "align-middle", "text-start");
-      quantityColumn.classList.add("col-1", "align-middle");
-      deleteColumn.classList.add("col-5", "align-middle", "text-end");
-
-      newProductEntry.appendChild(nameColumn);
-      newProductEntry.appendChild(quantityColumn);
-      newProductEntry.appendChild(deleteColumn);
+      columns.forEach((column) => {
+        var td = document.createElement("td");
+        td.innerHTML = column.content;
+        column.classNames.forEach((className) => td.classList.add(className));
+        newProductEntry.appendChild(td);
+      });
 
       realContents.appendChild(newProductEntry);
-
-      const value_to_remove = document.querySelector(
-        `option[value="${selectedProductId}"]`
-      );
-      console.log(value_to_remove, "removed");
-      value_to_remove.remove();
-      document.getElementById("contentInput").value = "null";
+      document.querySelector(`option[value="${selectedProductId}"]`).remove();
+      document.getElementById("productContentInput").value = "null";
+      updateTable();
     }
 
-    function addQuantity(el) {
-      trElement = el.parentElement.parentElement;
-      quantityDisplay = trElement.querySelector(".col-1");
-      quantityDisplay.innerHTML = parseInt(quantityDisplay.innerHTML) + 1;
-      realQuantityInput = trElement.querySelector("input[name='quantities[]']");
-      realQuantityInput.value = parseInt(realQuantityInput.value) + 1;
-    }
-
-    function decreaseQuantity(el) {
-      trElement = el.parentElement.parentElement;
-      quantityDisplay = trElement.querySelector(".col-1");
-      if (parseInt(quantityDisplay.innerHTML) === 1) {
-        removeThisProduct(el);
-        return;
-      }
-      quantityDisplay.innerHTML = parseInt(quantityDisplay.innerHTML) - 1;
-      realQuantityInput = trElement.querySelector("input[name='quantities[]']");
-      realQuantityInput.value = parseInt(realQuantityInput.value) - 1;
+    function getPriceInput(productId) {
+      let products = <%- JSON.stringify(products) %> ;
     }
 
     function removeThisProduct(el) {
@@ -344,6 +457,10 @@
         selectElement.add(option);
       });
       productId = trElement.remove();
+    }
+
+    function updateTable() {
+      console.log("table");
     }
 
     function validateContents() {

@@ -124,3 +124,14 @@
     width:100%;
   }
 }
+
+.specialFocus:focus{
+  background-color: var(--bs-primary);
+  color: var(--bs-light)
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
