@@ -96,7 +96,7 @@
 
           <!-- Selector -->
           <div class="row m-0">
-            <div class="col-6 mx-0 px-0 pe-2">
+            <div class="col mx-0 px-0 pe-2">
               <select
                 name="contentInput"
                 id="contentInput"
@@ -109,7 +109,7 @@
                 <% }) %>
               </select>
             </div>
-            <div class="col-4 col-sm-5 mx-0 px-0 pe-2">
+            <!-- <div class="col-4 col-sm-5 mx-0 px-0 pe-2">
               <input
                 type="number"
                 name="quantityInput"
@@ -117,7 +117,7 @@
                 id="quantityInput"
                 placeholder="Quantity"
               />
-            </div>
+            </div> -->
             <div class="col-2 col-sm-1 mx-0 px-0">
               <button
                 class="btn btn-primary btn-sm form-control"
@@ -250,23 +250,17 @@
 
     function addProductToHamper() {
       var selectedProductId = document.getElementById("contentInput").value;
-      console.log(selectedProductId);
       var selectedProductName =
         document.getElementById("contentInput").options[
           document.getElementById("contentInput").selectedIndex
         ].text;
-      var quantity = parseFloat(document.getElementById("quantityInput").value);
-      if (
-        !selectedProductId ||
-        isNaN(quantity) ||
-        quantity <= 0 ||
-        selectedProductId === "null"
-      ) {
-        alert("Please select a product and enter a valid quantity.");
+      // var quantity = parseFloat(document.getElementById("quantityInput").value);
+      if (!selectedProductId || selectedProductId === "null") {
+        alert("Please select a product and enter a product.");
         return;
       }
 
-      document.getElementById("quantityInput").value = "";
+      // document.getElementById("quantityInput").value = "";
 
       var realContents = document.querySelector(".realContentsBody");
 
@@ -277,17 +271,21 @@
       var deleteColumn = document.createElement("td");
 
       nameColumn.innerHTML = selectedProductName;
-      quantityColumn.innerHTML = `${quantity} <input type="hidden" name="quantities[]" value="${quantity}">`;
+      quantityColumn.innerHTML = 1;
       deleteColumn.innerHTML = `
-      <button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)">
-        <i class="fa-solid fa-trash"></i>
+      <button class="btn btn-success btn-sm" type="button" onclick="addQuantity(this)">
+        <i class="fa-solid fa-plus"></i>
       </button>
+      <button class="btn btn-danger btn-sm" type="button" onclick="decreaseQuantity(this)">
+        <i class="fa-solid fa-minus"></i>
+      </button>
+      <input type="hidden" name="quantities[]" value=1>
       <input type="hidden" name="contents[]" value="${selectedProductId}">
       `;
 
-      nameColumn.classList.add("col-7", "align-middle", "text-start");
-      quantityColumn.classList.add("col-3", "align-middle");
-      deleteColumn.classList.add("col-2", "align-middle");
+      nameColumn.classList.add("col-6", "align-middle", "text-start");
+      quantityColumn.classList.add("col-1", "align-middle");
+      deleteColumn.classList.add("col-5", "align-middle", "text-end");
 
       newProductEntry.appendChild(nameColumn);
       newProductEntry.appendChild(quantityColumn);
@@ -303,11 +301,31 @@
       document.getElementById("contentInput").value = "null";
     }
 
+    function addQuantity(el) {
+      trElement = el.parentElement.parentElement;
+      quantityDisplay = trElement.querySelector(".col-1");
+      quantityDisplay.innerHTML = parseInt(quantityDisplay.innerHTML) + 1;
+      realQuantityInput = trElement.querySelector("input[name='quantities[]']");
+      realQuantityInput.value = parseInt(realQuantityInput.value) + 1;
+    }
+
+    function decreaseQuantity(el) {
+      trElement = el.parentElement.parentElement;
+      quantityDisplay = trElement.querySelector(".col-1");
+      if (parseInt(quantityDisplay.innerHTML) === 1) {
+        removeThisProduct(el);
+        return;
+      }
+      quantityDisplay.innerHTML = parseInt(quantityDisplay.innerHTML) - 1;
+      realQuantityInput = trElement.querySelector("input[name='quantities[]']");
+      realQuantityInput.value = parseInt(realQuantityInput.value) - 1;
+    }
+
     function removeThisProduct(el) {
       trElement = el.parentElement.parentElement;
-      productId = el.nextElementSibling.value;
-      console.log(el.nextElementSibling.value);
-      productName = trElement.querySelector(".col-7").innerHTML;
+      productId = el.nextElementSibling.nextElementSibling.value;
+      console.log(el.nextElementSibling.nextElementSibling.value);
+      productName = trElement.querySelector(".col-6").innerHTML;
 
       newOption = document.createElement("option");
       newOption.value = productId;

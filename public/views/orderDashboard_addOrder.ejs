@@ -25,9 +25,9 @@
       referrerpolicy="no-referrer"
     />
     <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
-    <link rel="stylesheet" href="../../styles/orderDashboard.css" />
-    <link rel="shortcut icon" href="../../icon.png" type="image/x-icon" />
-    <title>Edit Hamper</title>
+    <link rel="stylesheet" href="../styles/orderDashboard.css" />
+    <link rel="shortcut icon" href="../icon.png" type="image/x-icon" />
+    <title>Add Order</title>
   </head>
 
   <body>
@@ -66,16 +66,14 @@
     </nav>
 
     <!-- Form -->
-    <div
-      class="container mx-auto mt-5 d-flex flex-row justify-content-center w-100 w-md-50"
-    >
+    <div class="container mx-auto mt-5 d-flex flex-row justify-content-center">
       <form
-        action="/orderDashboard/editHamper/<%= hamperDetails._id %>"
+        action="/orderDashboard/addHamper"
         method="post"
         class="w-lg-50"
         id="myForm"
       >
-        <h1>✍️Edit Hamper📦</h1>
+        <h1>➕Add Order</h1>
         <br />
 
         <!-- Name -->
@@ -87,7 +85,6 @@
             id="name"
             class="form-control"
             placeholder="Enter hamper name"
-            value="<%= hamperDetails.name %>"
             required
           />
         </div>
@@ -138,42 +135,7 @@
             <table class="table realContents w-75 mx-auto">
               <tbody
                 class="realContentsBody text-center align-content-center border-top"
-              >
-                <% hamperDetails.contents.forEach(content => { %>
-                <tr>
-                  <td class="col-6 align-middle text-start">
-                    <%= content.productId.name %>
-                  </td>
-                  <td class="col-1 align-middle"><%= content.quantity %></td>
-                  <td class="col-5 align-middle text-end">
-                    <button
-                      class="btn btn-success btn-sm"
-                      type="button"
-                      onclick="addQuantity(this)"
-                    >
-                      <i class="fa-solid fa-plus"></i>
-                    </button>
-                    <button
-                      class="btn btn-danger btn-sm"
-                      type="button"
-                      onclick="decreaseQuantity(this)"
-                    >
-                      <i class="fa-solid fa-minus"></i>
-                    </button>
-                    <input
-                      type="hidden"
-                      name="quantities[]"
-                      value="<%= content.quantity %>"
-                    />
-                    <input
-                      type="hidden"
-                      name="contents[]"
-                      value="<%= content.productId._id %>"
-                    />
-                  </td>
-                </tr>
-                <% }) %>
-              </tbody>
+              ></tbody>
             </table>
           </div>
         </div>
@@ -181,6 +143,22 @@
         <!-- Prices -->
         <div class="form-group price-group">
           <label for="prices">Prices</label>
+          <div class="row mx-0 gap-2" id="prices">
+            <input
+              type="text"
+              name="priceType1"
+              placeholder="Price Type 1"
+              class="form-control col"
+              required
+            />
+            <input
+              type="number"
+              name="priceValue1"
+              placeholder="Price Value 1"
+              class="form-control col"
+              required
+            />
+          </div>
         </div>
 
         <br />
@@ -216,7 +194,7 @@
           <button
             type="button"
             class="btn btn-primary form-btn ms-2"
-            onclick="redirect('/orderDashboard/hampers')"
+            onclick="redirect('/orderDashboard/products')"
           >
             Cancel
           </button>
@@ -234,7 +212,7 @@
 
     function addPrice() {
       const pricesContainer = document.querySelector(".price-group");
-      const existingPairs = pricesContainer.querySelectorAll(".row.mx-0.gap-2").length;
+      const existingPairs = pricesContainer.querySelectorAll(".row").length;
       const newPricePair = document.createElement("div");
       newPricePair.classList.add("row", "px-0", "mx-0", "gap-2");
       newPricePair.innerHTML = `
@@ -343,10 +321,10 @@
       realQuantityInput.value = parseInt(realQuantityInput.value) - 1;
     }
 
-
     function removeThisProduct(el) {
       trElement = el.parentElement.parentElement;
       productId = el.nextElementSibling.nextElementSibling.value;
+      console.log(el.nextElementSibling.nextElementSibling.value);
       productName = trElement.querySelector(".col-6").innerHTML;
 
       newOption = document.createElement("option");
@@ -379,49 +357,5 @@
         alert("Contents must have at least one product!");
       }
     }
-
-    document.addEventListener('DOMContentLoaded', function() {
-      const priceGroup = document.querySelector('.price-group');
-      const orderDataPrices = <%- JSON.stringify(hamperDetails.prices) %> ;
-
-      // Function to populate input fields with values from the OrderData.prices object
-      function populatePrices(pricesObject) {
-          Object.entries(pricesObject).forEach(([key, value], index) => {
-              const rowDiv = document.createElement('div');
-              rowDiv.classList.add('row','mx-0','gap-2');
-
-              const priceTypeInput = document.createElement('input');
-              priceTypeInput.type = 'text';
-              priceTypeInput.name = `priceType${index + 1}`;
-              priceTypeInput.placeholder = `Price Type ${index + 1}`;
-              priceTypeInput.classList.add('form-control', 'col');
-              priceTypeInput.value = key;
-              rowDiv.appendChild(priceTypeInput);
-
-              const priceValueInput = document.createElement('input');
-              priceValueInput.type = 'number';
-              priceValueInput.name = `priceValue${index + 1}`;
-              priceValueInput.placeholder = `Price Value ${index + 1}`;
-              priceValueInput.classList.add('form-control', 'col');
-              priceValueInput.value = value;
-              rowDiv.appendChild(priceValueInput);
-
-              priceGroup.appendChild(rowDiv);
-          });
-      }
-
-      // Call the function to populate input fields with values from OrderData.prices
-      populatePrices(orderDataPrices);
-
-      const selectedProducts = <%- JSON.stringify(hamperDetails.contents) %> ;
-      selectedProducts.forEach(product => {
-        let productId = product.productId._id;
-        const value_to_remove = document.querySelector(
-          `option[value="${productId}"]`
-        );
-        value_to_remove.remove();
-      })
-      document.getElementById("contentInput").value = "null";
-    });
   </script>
 </html>

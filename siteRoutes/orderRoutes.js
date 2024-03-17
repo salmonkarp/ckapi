@@ -5,6 +5,7 @@ const axios = require("axios");
 const productRoutes = require("./orderRoutes_product");
 const hamperRoutes = require("./orderRoutes_hamper");
 const customerRoutes = require("./orderRoutes_customer");
+const orderRoutes = require("./orderRoutes_order");
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
@@ -91,5 +92,6 @@ router.get("/customers", (req, res) => {
 router.use("/", productRoutes);
 router.use("/", hamperRoutes);
 router.use("/", customerRoutes);
+router.use("/", orderRoutes);
 
 module.exports = router;
