@@ -23,6 +23,8 @@
     <title>Product Dashboard</title>
   </head>
   <body>
+    <% function formatRupiah(number) { return number.toLocaleString('id-ID', {
+    style: 'currency', currency: 'IDR' }); } %>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
       <button
@@ -101,11 +103,12 @@
               <tbody>
                 <% slicedData.forEach(product => { %>
                 <tr>
-                  <td class="col-5"><%= product.name %></td>
-                  <td class="col-2">
+                  <td class="col-4"><%= product.name %></td>
+                  <td class="col-3">
                     <% Object.entries(product.prices).forEach(([key, value]) =>
                     { %>
-                    <strong><%= key %>:</strong> <%= value %> <br />
+                    <strong><%= key %>:</strong> <%= formatRupiah(value) %>
+                    <br />
                     <% }) %>
                   </td>
                   <td class="col-3 text-center"><%= product.currentStock %></td>

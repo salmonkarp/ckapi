@@ -16,6 +16,11 @@
     <title>Order Dashboard</title>
   </head>
   <body>
+    <%
+      function formatRupiah(number) {
+        return number.toLocaleString('id-ID', { style: 'currency', currency: 'IDR' });
+      }
+    %>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
       <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -128,7 +133,7 @@
                 class="table-responsive"
               >
                 <table
-                  class="table table-hover table-borderless align-middle text-start"
+                  class="table table-borderless align-middle text-start"
                 >
                   <thead>
                     <tr>
@@ -144,49 +149,49 @@
                       <tr>
                         <td><%= product.name %></td>
                         <% if(product.discount === 0) { %>
-                          <td><%= product.priceValue %> (<%= product.priceType %>)</td>
+                          <td><%= formatRupiah(product.priceValue) %> (<%= product.priceType %>)</td>
                           <% var subtotal = product.priceValue; %>
                         <% } else { %>
                           <% var discountValue = parseInt(product.priceValue * product.discount / 100); %>
                           <% var subtotal = product.priceValue - discountValue; %>
-                          <td><%= product.priceValue %> (<%= product.priceType %>) <br> -  <%= discountValue %> (<%= product.discount %>%) <br> = <%= subtotal %></td>
+                          <td><%= formatRupiah(product.priceValue) %> (<%= product.priceType %>) <br> -  <%= formatRupiah(discountValue) %> (<%= product.discount %>%) <br> = <%= formatRupiah(subtotal) %></td>
                         <% } %>
-                        <td><%= product.quantity.$numberDecimal %></td>
-                        <td>Rp<%= subtotal * product.quantity.$numberDecimal %></td>
+                        <td><%= formatRupiah(product.quantity.$numberDecimal) %></td>
+                        <td><%= formatRupiah(subtotal * product.quantity.$numberDecimal) %></td>
                         <% total += subtotal * product.quantity.$numberDecimal; %>
                       </tr>
                     <% }) %>
-                    <% order.hamperContent.forEach(product => { %>
+                    <% order.hamperContent.forEach(hamper => { %>
                       <tr>
-                        <td><%= product.name %></td>
-                        <% if(product.discount === 0) { %>
-                          <td><%= product.priceValue %> (<%= product.priceType %>)</td>
-                          <% var subtotal = product.priceValue; %>
+                        <td><%= hamper.name %></td>
+                        <% if(hamper.discount === 0) { %>
+                          <td><%= formatRupiah(hamper.priceValue) %> (<%= hamper.priceType %>)</td>
+                          <% var subtotal = hamper.priceValue; %>
                         <% } else { %>
-                          <% var discountValue = parseInt(product.priceValue * product.discount / 100); %>
-                          <% var subtotal = product.priceValue - discountValue; %>
-                          <td><%= product.priceValue %> (<%= product.priceType %>) <br> -  <%= discountValue %> (<%= product.discount %>%) <br> = <%= subtotal %></td>
+                          <% var discountValue = parseInt(hamper.priceValue * hamper.discount / 100); %>
+                          <% var subtotal = hamper.priceValue - discountValue; %>
+                          <td><%= formatRupiah(hamper.priceValue) %> (<%= hamper.priceType %>) <br> -  <%= formatRupiah(discountValue) %> (<%= hamper.discount %>%) <br> = <%= subtotal %></td>
                         <% } %>
-                        <td><%= product.quantity.$numberDecimal %></td>
-                        <td>Rp<%= subtotal * product.quantity.$numberDecimal %></td>
-                        <% total += subtotal * product.quantity.$numberDecimal; %>
+                        <td><%= formatRupiah(hamper.quantity.$numberDecimal) %></td>
+                        <td><%= formatRupiah(subtotal * hamper.quantity.$numberDecimal) %></td>
+                        <% total += subtotal * hamper.quantity.$numberDecimal; %>
                       </tr>
                     <% }) %>
 
                     
                     <tr>
                       <td colspan="3" style="text-align: right;"><strong>Total</strong></td>
-                      <td>Rp<%= total %></td>
+                      <td><%= formatRupiah(total) %></td>
                     </tr>
 
                     <% if(order.orderDiscount !== 0) { %>
                       <tr>
                         <td colspan="3" style="text-align: right;"><strong>Discount (<%= order.orderDiscount %>%)</strong></td>
-                        <td>Rp<%= parseInt(order.orderDiscount * total / 100) %></td>
+                        <td><%= formatRupiah(parseInt(order.orderDiscount * total / 100)) %></td>
                       </tr>
                       <tr>
                         <td colspan="3" style="text-align: right;"><strong>Final Total</strong></td>
-                        <td>Rp<%= total - parseInt(order.orderDiscount * total / 100) %></td>
+                        <td><%= formatRupiah(total - parseInt(order.orderDiscount * total / 100)) %></td>
                       </tr>
                     <% } %>
                   </tbody>
