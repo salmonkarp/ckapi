@@ -4,6 +4,7 @@ const router = express.Router();
 const axios = require("axios");
 const productRoutes = require("./orderRoutes_product");
 const hamperRoutes = require("./orderRoutes_hamper");
+const customerRoutes = require("./orderRoutes_customer");
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
@@ -71,7 +72,24 @@ router.get("/hampers", (req, res) => {
     });
 });
 
+// Customer Dashboard
+router.get("/customers", (req, res) => {
+  axios
+    .get(api_url + "/api/customer", {
+      headers,
+    })
+    .then((response) => {
+      customers = response.data;
+      res.render("orderDashboard_customers", { customers });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
+
 router.use("/", productRoutes);
 router.use("/", hamperRoutes);
+router.use("/", customerRoutes);
 
 module.exports = router;
