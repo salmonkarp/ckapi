@@ -29,6 +29,7 @@ router.get("/", (req, res) => {
       const endIndex = startIndex + itemsPerPage;
       const slicedData = orderArray[0].slice(startIndex, endIndex);
       const totalPages = Math.ceil(orderArray[0].length / itemsPerPage);
+      console.log(slicedData[0].productContent, slicedData[0].hamperContent);
       res.render("orderDashboard", { page, totalPages, slicedData });
     })
     .catch((error) => {

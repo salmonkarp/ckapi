@@ -21,16 +21,20 @@ const productRecordSchema = mongoose.Schema({
         const priceType = await mongoose
           .model("Product")
           .findOne({ [`prices.${value}`]: { $exists: true } });
-        return priceType !== null; // Return true if product exists, false otherwise
+        return priceType !== null || value === "custom"; // Return true if product exists, false otherwise
       },
       message: "Price type does not exist",
     },
   },
   quantity: {
-    type: mongoose.Schema.Types.Decimal128,
+    type: Number,
     required: [true, "Enter the quantity for each product"],
   },
   discount: {
+    type: Number,
+    default: 0,
+  },
+  customPrice: {
     type: Number,
     default: 0,
   },
@@ -51,14 +55,13 @@ const hamperRecordSchema = mongoose.Schema({
   },
   priceType: {
     type: String,
-    ref: "Hamper",
     required: [true, "Enter the price type"],
     validate: {
       validator: async function (value) {
         const priceType = await mongoose
           .model("Hamper")
-          .findOne({ [value]: { $exists: true } });
-        return priceType !== null; // Return true if product exists, false otherwise
+          .findOne({ [`prices.${value}`]: { $exists: true } });
+        return priceType !== null || value === "custom"; // Return true if product exists, false otherwise
       },
       message: "Price type does not exist",
     },
@@ -68,6 +71,10 @@ const hamperRecordSchema = mongoose.Schema({
     required: [true, "Enter the quantity for each hamper"],
   },
   discount: {
+    type: Number,
+    default: 0,
+  },
+  customPrice: {
     type: Number,
     default: 0,
   },

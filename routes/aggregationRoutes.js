@@ -58,15 +58,23 @@ async function aggregateObject(originalObject) {
   for (const productContent of modifiedObject.productContent) {
     const product = await Product.findById(productContent.productId);
     if (product) {
-      productContent.priceValue = product.prices[productContent.priceType];
+      if (productContent.priceType === "custom") {
+        productContent.priceValue = productContent.customPrice;
+      } else {
+        productContent.priceValue = product.prices[productContent.priceType];
+        // console.log(productContent.name);
+      }
       productContent.name = product.name;
-      // console.log(productContent.name);
     }
   }
   for (const hamperContent of modifiedObject.hamperContent) {
     const hamper = await Hamper.findById(hamperContent.hamperId);
     if (hamper) {
-      hamperContent.priceValue = hamper.prices[hamperContent.priceType];
+      if (hamperContent.priceType === "custom") {
+        hamperContent.priceValue = hamperContent.customPrice;
+      } else {
+        hamperContent.priceValue = hamper.prices[hamperContent.priceType];
+      }
       hamperContent.name = hamper.name;
     }
   }

@@ -130,17 +130,17 @@
               Order Note: <%= order.details %> <br> <br>
 
               <div
-                class="table-responsive"
+                class="table-responsive flipped-container"
               >
                 <table
-                  class="table table-borderless align-middle text-start"
+                  class="table table-borderless align-middle text-star flipped"
                 >
                   <thead>
                     <tr>
-                      <th>Name</th>
-                      <th>Price</th>
-                      <th>Quantity</th>
-                      <th>Subtotal</th>
+                      <th class="col-4">Name</th>
+                      <th class="col-4">Price</th>
+                      <th class="col-2">Quantity</th>
+                      <th class="col-2">Subtotal</th>
                     </tr>
                   </thead>
                   <tbody class="table-group-divider">
@@ -156,9 +156,9 @@
                           <% var subtotal = product.priceValue - discountValue; %>
                           <td><%= formatRupiah(product.priceValue) %> (<%= product.priceType %>) <br> -  <%= formatRupiah(discountValue) %> (<%= product.discount %>%) <br> = <%= formatRupiah(subtotal) %></td>
                         <% } %>
-                        <td><%= formatRupiah(product.quantity.$numberDecimal) %></td>
-                        <td><%= formatRupiah(subtotal * product.quantity.$numberDecimal) %></td>
-                        <% total += subtotal * product.quantity.$numberDecimal; %>
+                        <td>x  <%= product.quantity %></td>
+                        <td><%= formatRupiah(subtotal * product.quantity) %></td>
+                        <% total += subtotal * product.quantity; %>
                       </tr>
                     <% }) %>
                     <% order.hamperContent.forEach(hamper => { %>
@@ -172,9 +172,9 @@
                           <% var subtotal = hamper.priceValue - discountValue; %>
                           <td><%= formatRupiah(hamper.priceValue) %> (<%= hamper.priceType %>) <br> -  <%= formatRupiah(discountValue) %> (<%= hamper.discount %>%) <br> = <%= subtotal %></td>
                         <% } %>
-                        <td><%= formatRupiah(hamper.quantity.$numberDecimal) %></td>
-                        <td><%= formatRupiah(subtotal * hamper.quantity.$numberDecimal) %></td>
-                        <% total += subtotal * hamper.quantity.$numberDecimal; %>
+                        <td>x  <%= hamper.quantity %></td>
+                        <td><%= formatRupiah(subtotal * hamper.quantity) %></td>
+                        <% total += subtotal * hamper.quantity; %>
                       </tr>
                     <% }) %>
 

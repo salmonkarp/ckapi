@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const handleOrder = require("../helper_functions/handleOrder");
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
@@ -22,6 +23,10 @@ function fetchFullData() {
       const hampers = responses[1].data;
       const customers = responses[2].data;
 
+      products.sort((a, b) => a.name.localeCompare(b.name));
+      hampers.sort((a, b) => a.name.localeCompare(b.name));
+      customers.sort((a, b) => a.name.localeCompare(b.name));
+
       return { products, hampers, customers };
     })
     .catch((error) => {
@@ -39,6 +44,27 @@ router.get("/addOrder", (req, res) => {
         hampers: combinedData.hampers,
         customers: combinedData.customers,
       });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
+
+router.post("/addOrder", async (req, res) => {
+  console.log(req.body);
+  handleOrder(req.body)
+    .then((orderObject) => {
+      console.log(orderObject);
+      axios
+        .post(api_url + "/api/order", orderObject, { headers })
+        .then((response) => {
+          res.redirect("/orderDashboard");
+        })
+        .catch((error) => {
+          console.log(error);
+          res.render("error", { error });
+        });
     })
     .catch((error) => {
       console.log(error);

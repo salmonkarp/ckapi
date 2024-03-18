@@ -66,21 +66,20 @@
     </nav>
 
     <!-- Wrapper -->
-    <div class="container mx-auto mt-5 row mb-5 px-0">
-      <!-- Form -->
-      <form
-        action="/orderDashboard/addHamper"
-        method="post"
-        class="w-lg-50 col"
-        style="max-width: 40%"
-        id="myForm"
-      >
+    <form
+      class="container mx-auto mt-5 row mb-lg-0 px-0"
+      id="myForm"
+      action="/orderDashboard/addOrder"
+      method="post"
+    >
+      <!-- Left Side -->
+      <div class="col-lg addOrderLeft mb-5">
         <h1>➕Add Order🧾</h1>
         <br />
 
         <!-- Select Option for Customer -->
         <div
-          class="btn-group"
+          class="btn-group d-flex justify-content-center"
           role="group"
           aria-label="Basic radio toggle button group"
           onchange="changeCustomerType()"
@@ -111,7 +110,74 @@
           >
         </div>
         <br />
-        <br />
+
+        <!-- Product Contents -->
+        <div class="form-group">
+          <label for="contents">Product Contents</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col mx-0 px-0 pe-2">
+              <select
+                name="productContentInput"
+                id="productContentInput"
+                class="form-select"
+                data-placeholder="Choose a product"
+                onchange="advanceTab(this)"
+              >
+                <option disabled selected value="null">Select a product</option>
+                <% products.forEach(product => { %>
+                <option value="<%= product._id %>"><%= product.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-2 col-xxl-1 mx-0 px-0">
+              <button
+                class="btn btn-primary btn-sm form-control specialFocus"
+                type="button"
+                onclick="addProductToOrder()"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <br />
+        </div>
+
+        <!-- Hamper Contents -->
+        <div class="form-group">
+          <label for="contents">Hamper Contents</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col mx-0 px-0 pe-2">
+              <select
+                name="hamperContentInput"
+                id="hamperContentInput"
+                class="form-select"
+                data-placeholder="Choose a hamper"
+                onchange="advanceTab(this)"
+              >
+                <option disabled selected value="null">Select a hamper</option>
+                <% hampers.forEach(hamper => { %>
+                <option value="<%= hamper._id %>"><%= hamper.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-2 col-xxl-1 mx-0 px-0">
+              <button
+                class="btn btn-primary btn-sm form-control specialFocus"
+                type="button"
+                onclick="addHamperToOrder()"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <br />
+        </div>
 
         <!-- Existing Customer Selector -->
         <div class="form-group existingCustomerContainer">
@@ -122,8 +188,9 @@
             class="form-select"
             name="existingCustomer"
             id="existingCustomer"
+            required
           >
-            <option disabled selected>Select existing customer</option>
+            <option disabled selected value="">Select existing customer</option>
             <% customers.forEach(customer => { %>
             <option value="<%= customer._id %>"><%= customer.name %></option>
             <% }) %>
@@ -172,84 +239,21 @@
           <!-- <hr class="mt-2" /> -->
         </div>
 
-        <!-- Product Contents -->
-        <div class="form-group">
-          <label for="contents">Product Contents</label>
-
-          <!-- Selector -->
-          <div class="row m-0">
-            <div class="col mx-0 px-0 pe-2">
-              <select
-                name="productContentInput"
-                id="productContentInput"
-                class="form-select"
-                data-placeholder="Choose a product"
-                onchange="advanceTab(this)"
-              >
-                <option disabled selected value="null">Select a product</option>
-                <% products.forEach(product => { %>
-                <option value="<%= product._id %>"><%= product.name %></option>
-                <% }) %>
-              </select>
-            </div>
-            <div class="col-2 col-sm-1 mx-0 px-0">
-              <button
-                class="btn btn-primary btn-sm form-control specialFocus"
-                type="button"
-                onclick="addProductToOrder()"
-              >
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div>
-          </div>
-
-          <br />
-        </div>
-
-        <!-- Hamper Contents -->
-        <div class="form-group">
-          <label for="contents">Hamper Contents</label>
-
-          <!-- Selector -->
-          <div class="row m-0">
-            <div class="col mx-0 px-0 pe-2">
-              <select
-                name="hamperContentInput"
-                id="hamperContentInput"
-                class="form-select"
-                data-placeholder="Choose a hamper"
-                onchange="advanceTab(this)"
-              >
-                <option disabled selected value="null">Select a hamper</option>
-                <% hampers.forEach(hamper => { %>
-                <option value="<%= hamper._id %>"><%= hamper.name %></option>
-                <% }) %>
-              </select>
-            </div>
-            <div class="col-2 col-sm-1 mx-0 px-0">
-              <button
-                class="btn btn-primary btn-sm form-control specialFocus"
-                type="button"
-                onclick="addProductToOrder()"
-              >
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div>
-          </div>
-
-          <br />
-        </div>
-
         <!-- Order Discount -->
         <div class="form-group">
           <label for="orderDiscount" class="form-label">Order Discount</label>
-          <input
-            type="number"
-            class="form-control"
-            name="orderDiscount"
-            id="orderDiscount"
-            placeholder="Enter Order Discount"
-          />
+          <div class="input-group">
+            <input
+              type="number"
+              class="form-control"
+              name="orderDiscount"
+              id="orderDiscount"
+              placeholder="Enter Order Discount"
+              step="0.01"
+              min="0"
+            />
+            <div class="input-group-text">%</div>
+          </div>
         </div>
         <br />
 
@@ -284,23 +288,22 @@
             Cancel
           </button>
         </div>
-      </form>
+      </div>
 
       <!-- Order Display -->
-      <div class="container col border-start ms-5 ps-5">
+      <div class="container col-lg border-lg-start ms-lg-5 ps-md-5">
         <h3 class="text-center">Order Contents✍️</h3>
         <div class="container table-responsive mt-4 px-0">
           <table
             class="table realContents w-100 mx-auto text-center align-middle"
-            onchange="updateTable()"
           >
             <thead>
               <tr>
                 <th>Item Name</th>
                 <th>Price Type</th>
                 <th>Quantity</th>
-                <th>Subtotal</th>
-                <th></th>
+                <th>Discount</th>
+                <th>Options</th>
               </tr>
             </thead>
             <tbody
@@ -309,7 +312,7 @@
           </table>
         </div>
       </div>
-    </div>
+    </form>
   </body>
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
@@ -331,6 +334,8 @@
         document
           .querySelector(".existingCustomerContainer")
           .setAttribute("hidden", true);
+        document.querySelector("#customerName").setAttribute("required",true);
+        document.querySelector('#existingCustomer').removeAttribute("required");
       } else {
         document
           .querySelector(".newCustomerContainer")
@@ -338,38 +343,42 @@
         document
           .querySelector(".existingCustomerContainer")
           .removeAttribute("hidden");
+        document.querySelector("#existingCustomer").setAttribute("required",true);
+        document.querySelector('#customerName').removeAttribute("required");
       }
     }
 
-    $("#existingCustomer").select2({
-      theme: "bootstrap-5",
-      width: $(this).data("width")
-        ? $(this).data("width")
-        : $(this).hasClass("w-100")
-        ? "100%"
-        : "style",
-      placeholder: $(this).data("placeholder"),
+    $(document).ready(function() {
+        $("#existingCustomer").select2({
+            theme: "bootstrap-5",
+            width: $(this).data("width")
+                ? $(this).data("width")
+                : $(this).hasClass("w-100")
+                ? "100%"
+                : "style",
+            placeholder: $(this).data("placeholder"),
+        });
+        $("#productContentInput").select2({
+          theme: "bootstrap-5",
+          width: $(this).data("width")
+            ? $(this).data("width")
+            : $(this).hasClass("w-100")
+            ? "100%"
+            : "style",
+          placeholder: $(this).data("placeholder"),
+        });
+
+        $("#hamperContentInput").select2({
+          theme: "bootstrap-5",
+          width: $(this).data("width")
+            ? $(this).data("width")
+            : $(this).hasClass("w-100")
+            ? "100%"
+            : "style",
+          placeholder: $(this).data("placeholder"),
+        });
     });
 
-    $("#productContentInput").select2({
-      theme: "bootstrap-5",
-      width: $(this).data("width")
-        ? $(this).data("width")
-        : $(this).hasClass("w-100")
-        ? "100%"
-        : "style",
-      placeholder: $(this).data("placeholder"),
-    });
-
-    $("#hamperContentInput").select2({
-      theme: "bootstrap-5",
-      width: $(this).data("width")
-        ? $(this).data("width")
-        : $(this).hasClass("w-100")
-        ? "100%"
-        : "style",
-      placeholder: $(this).data("placeholder"),
-    });
 
     function advanceTab(el) {
       let nextBtn = el.parentElement.parentElement.querySelector(".btn");
@@ -389,7 +398,7 @@
         .text;
 
       if (!selectedProductId || selectedProductId === "null") {
-        alert("Please select a product and enter a product.");
+        alert("Please select a product.");
         return;
       }
 
@@ -397,23 +406,28 @@
       var newProductEntry = document.createElement("tr");
 
       var columns = [
-        { content: selectedProductName, classNames: ["col-3"] },
+        { content: selectedProductName, classNames: ["col-3","name"] },
         {
-          content: getPriceInput(selectedProductId),
-          classNames: ["col-3"],
+          content: getProductPriceInput(selectedProductId),
+          classNames: ["col","priceInput"],
         },
         {
           content:
-            '<input type="number" class="form-control text-center w-75 mx-auto" name="quantities[]" value="1">',
-          classNames: ["col-2", "text-center", "px-4"],
+            '<input type="number" class="form-control text-center w-75 mx-auto" name="quantities[]" value="1" step="0.01" min="0">',
+          classNames: ["col-2", "text-center", "px-4","quantity"],
         },
-        { content: "", classNames: ["col"] },
+        {
+          content: '<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="0" step="0.01" min="0">',
+          classNames: ["col-2","text-center","px-4","discount"],
+        },
         {
           content:
-            '<button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)"><i class="fa-solid fa-trash"></i></button><input type="hidden" name="contents[]" value="' +
-            selectedProductId +
-            '">',
-          classNames: ["col-1", "text-center"],
+            `<button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)">
+              <i class="fa-solid fa-trash"></i>
+              </button>
+              <input type="hidden" name="contents[]" value="${selectedProductId}">
+              <input type="hidden" name="${selectedProductId}_contentType" value="product">`,
+          classNames: ["col-1", "text-center","trash"],
         },
       ];
 
@@ -427,24 +441,124 @@
       realContents.appendChild(newProductEntry);
       document.querySelector(`option[value="${selectedProductId}"]`).remove();
       document.getElementById("productContentInput").value = "null";
-      updateTable();
     }
 
-    function getPriceInput(productId) {
+    function addHamperToOrder() {
+      var selectedHamperId = document.getElementById(
+        "hamperContentInput"
+      ).value;
+      var selectedHamperName = document.getElementById("hamperContentInput")
+        .options[document.getElementById("hamperContentInput").selectedIndex]
+        .text;
+
+      if (!selectedHamperId || selectedHamperId === "null") {
+        alert("Please select a hamper.");
+        return;
+      }
+
+      var realContents = document.querySelector(".realContentsBody");
+      var newProductEntry = document.createElement("tr");
+
+      var columns = [
+        { content: selectedHamperName, classNames: ["col-3","name"] },
+        {
+          content: getHamperPriceInput(selectedHamperId),
+          classNames: ["col","priceInput"],
+        },
+        {
+          content:
+            '<input type="number" class="form-control text-center w-75 mx-auto" name="quantities[]" value="1" step="0.01" min="0">',
+          classNames: ["col-2", "text-center", "px-4","quantity"],
+        },
+        {
+          content: '<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="0" step="0.01" min="0">',
+          classNames: ["col-2","text-center","px-4","discount"],
+        },
+        {
+          content:
+            `<button class="btn btn-danger btn-sm" type="button" onclick="removeThisHamper(this)">
+              <i class="fa-solid fa-trash"></i>
+              </button>
+              <input type="hidden" name="contents[]" value="${selectedHamperId}">
+              <input type="hidden" name="${selectedHamperId}" value="hamper">`,
+          classNames: ["col-1", "text-center","trash"],
+        },
+      ];
+
+      columns.forEach((column) => {
+        var td = document.createElement("td");
+        td.innerHTML = column.content;
+        column.classNames.forEach((className) => td.classList.add(className));
+        newProductEntry.appendChild(td);
+      });
+
+      realContents.appendChild(newProductEntry);
+      document.querySelector(`option[value="${selectedHamperId}"]`).remove();
+      document.getElementById("hamperContentInput").value = "null";
+    }
+
+
+    function getProductPriceInput(productId) {
       let products = <%- JSON.stringify(products) %> ;
+      let selectedProduct = products.find(product => product._id === productId);
+      let inputHTML = `
+      <select
+        name="${productId}_priceType"
+        id="${productId}_priceType"
+        class="form-select"
+        data-placeholder="Choose a price type"
+        onchange="updatePriceType(this)"
+      >
+      `;
+      console.log(selectedProduct.prices);
+      Object.entries(selectedProduct.prices).forEach(([key,value]) => {
+        inputHTML += `<option value="${key}" price-value="${value}">${key}: ${value}</option>`
+      })
+      inputHTML += `<option value="custom">Custom</option><input type="number" name="${productId}_customPrice" class="form-control" placeholder="Insert a custom price" hidden></select>`
+      return inputHTML;
+    }
+
+    function getHamperPriceInput(hamperId) {
+      let hampers = <%- JSON.stringify(hampers) %> ;
+      let selectedHamper = hampers.find(hamper => hamper._id === hamperId);
+      let inputHTML = `
+      <select
+        name="${hamperId}_priceType"
+        id="${hamperId}_priceType"
+        class="form-select"
+        data-placeholder="Choose a price type"
+        onchange="updatePriceType(this)"
+      >
+      `;
+      console.log(selectedHamper.prices);
+      Object.entries(selectedHamper.prices).forEach(([key,value]) => {
+        inputHTML += `<option value="${key}" price-value="${value}">${key}: ${value}</option>`
+      })
+      inputHTML += `<option value="custom">Custom</option><input type="number" name="${hamperId}_customPrice" class="form-control" placeholder="Insert a custom price" hidden></select>`
+      return inputHTML;
+    }
+
+
+    function updatePriceType(el) {
+      if(el.value === 'custom'){
+        el.nextElementSibling.removeAttribute("hidden");
+      }
+      else{
+        el.nextElementSibling.setAttribute("hidden",true);
+      }
     }
 
     function removeThisProduct(el) {
       trElement = el.parentElement.parentElement;
-      productId = el.nextElementSibling.nextElementSibling.value;
-      console.log(el.nextElementSibling.nextElementSibling.value);
-      productName = trElement.querySelector(".col-6").innerHTML;
+      productId = el.nextElementSibling.value;
+      console.log(el.nextElementSibling.value);
+      productName = trElement.querySelector(".name").innerHTML;
 
       newOption = document.createElement("option");
       newOption.value = productId;
       newOption.text = productName;
 
-      selectElement = document.getElementById("contentInput");
+      selectElement = document.getElementById("productContentInput");
       selectElement.add(newOption);
 
       var options = Array.from(selectElement.options);
@@ -459,10 +573,34 @@
       productId = trElement.remove();
     }
 
-    function updateTable() {
-      console.log("table");
+    function removeThisHamper(el) {
+      let trElement = el.parentElement.parentElement;
+      let hamperId = el.nextElementSibling.value;
+      console.log(el.nextElementSibling.value);
+      let hamperName = trElement.querySelector(".name").innerHTML;
+
+      newOption = document.createElement("option");
+      newOption.value = hamperId;
+      newOption.text = hamperName;
+
+      selectElement = document.getElementById("hamperContentInput");
+      selectElement.add(newOption);
+
+      var options = Array.from(selectElement.options);
+      options.sort(function (a, b) {
+        return a.text.localeCompare(b.text);
+      });
+
+      selectElement.innerHTML = "";
+      options.forEach(function (option) {
+        selectElement.add(option);
+      });
+      hamperId = trElement.remove();
     }
 
+
+    function formatRupiah(number) { return number.toLocaleString('id-ID', {
+    style: 'currency', currency: 'IDR' }); }
     function validateContents() {
       let contents = document.querySelector(".realContentsBody");
       if (!document.querySelector("#myForm").reportValidity()) {
