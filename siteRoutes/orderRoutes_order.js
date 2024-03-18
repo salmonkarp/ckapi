@@ -35,6 +35,34 @@ function fetchFullData() {
     });
 }
 
+function fetchFullFullData(orderId) {
+  const promises = [];
+  promises.push(axios.get(api_url + "/api/product", { headers }));
+  promises.push(axios.get(api_url + "/api/hamper", { headers }));
+  promises.push(axios.get(api_url + "/api/customer", { headers }));
+  promises.push(
+    axios.get(api_url + "/api/aggregation/orderDetail/" + orderId, { headers })
+  );
+
+  return Promise.all(promises)
+    .then((responses) => {
+      const products = responses[0].data;
+      const hampers = responses[1].data;
+      const customers = responses[2].data;
+      const order = responses[3].data;
+
+      products.sort((a, b) => a.name.localeCompare(b.name));
+      hampers.sort((a, b) => a.name.localeCompare(b.name));
+      customers.sort((a, b) => a.name.localeCompare(b.name));
+
+      return { products, hampers, customers, order };
+    })
+    .catch((error) => {
+      console.log(error);
+      throw error;
+    });
+}
+
 router.get("/addOrder", (req, res) => {
   fetchFullData()
     .then((combinedData) => {
@@ -65,6 +93,23 @@ router.post("/addOrder", async (req, res) => {
           console.log(error);
           res.render("error", { error });
         });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
+
+router.get("/editOrder/:id", (req, res) => {
+  let orderId = req.params.id;
+  fetchFullFullData(orderId)
+    .then((combinedData) => {
+      res.render("orderDashboard_editOrder", {
+        products: combinedData.products,
+        hampers: combinedData.hampers,
+        customers: combinedData.customers,
+        orderData: combinedData.order,
+      });
     })
     .catch((error) => {
       console.log(error);

@@ -10,7 +10,8 @@ const headers = {
 async function handleOrder(body) {
   let returnObject = {};
   returnObject.orderDiscount = parseFloat(body.orderDiscount) || 0;
-  returnObject.orderNote = body.orderNote || "";
+  returnObject.details = body.orderNote || "";
+  returnObject.deliveryDate = body.deliveryDate || Date.now();
 
   returnObject.productContent = [];
   returnObject.hamperContent = [];

@@ -47,6 +47,7 @@ async function aggregateObject(originalObject) {
   modifiedObject.customerAddress = customer.address;
   modifiedObject.customerNote = customer.note;
 
+  modifiedObject.deliveryDateOld = modifiedObject.deliveryDate;
   modifiedObject.deliveryDate = new Date(
     modifiedObject.deliveryDate
   ).toLocaleDateString("en-US", {
