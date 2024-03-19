@@ -283,26 +283,6 @@
       </div>
       
     </div>
-
-    <!-- Page Selector -->
-    <% if(totalPages > 1) { %>
-      <div class="container mx-auto mt-3 w-md-75">
-        <nav aria-label="Page navigation" class="mx-auto">
-          <ul class="pagination justify-content-center ">
-            <% if(page > 1) { %>
-            <li class="page-item"><a class="page-link" href="?page=<%= page-1 %>">Previous</a></li>
-            <% } %>
-            <% for(let i=0; i<totalPages; i++) { %>
-            <li class="page-item"><a class="page-link" href="?page=<%= i+1 %>"><%= i+1 %></a></li>
-            <% } %>
-            <% if(page < totalPages) { %>
-            <li class="page-item"><a class="page-link" href="?page=<%= page+1 %>">Next</a></li>
-            <% } %>
-          </ul>
-        </nav>
-      </div>
-      <% } %>
-
   </body>
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

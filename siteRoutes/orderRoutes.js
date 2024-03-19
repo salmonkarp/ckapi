@@ -23,17 +23,8 @@ router.get("/", (req, res) => {
     })
     .then((response) => {
       orderArray.push(response.data);
-      orderArray[0].sort((a, b) =>
-        a.deliveryDate.localeCompare(b.deliveryDate)
-      );
-      const page = parseInt(req.query.page) || 1;
-      const itemsPerPage = 5;
-      const startIndex = (page - 1) * itemsPerPage;
-      const endIndex = startIndex + itemsPerPage;
-      const slicedData = orderArray[0].slice(startIndex, endIndex);
-      const totalPages = Math.ceil(orderArray[0].length / itemsPerPage);
-      console.log(slicedData[0].productContent, slicedData[0].hamperContent);
-      res.render("orderDashboard", { page, totalPages, slicedData });
+      const slicedData = orderArray[0];
+      res.render("orderDashboard", { slicedData });
     })
     .catch((error) => {
       console.error(error);
