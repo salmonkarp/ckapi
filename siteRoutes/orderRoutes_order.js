@@ -169,6 +169,43 @@ router.post("/deleteOrder/:id", (req, res) => {
     });
 });
 
-router.get("/sendOrder/:id", (req, res) => {});
+router.get("/sendOrder/:id", (req, res) => {
+  let orderId = req.params.id;
+  axios
+    .get(api_url + "/api/aggregation/orderDetail/" + orderId, {
+      headers,
+    })
+    .then((response) => {
+      let order = response.data;
+      res.render("orderDashboard_sendOrder", { order });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
+
+router.post("/sendOrder/:id", (req, res) => {
+  let orderId = req.params.id;
+  axios
+    .get(api_url + "/api/order/" + orderId, { headers })
+    .then((response) => {
+      let orderObject = response.data;
+      orderObject.isSent = true;
+      axios
+        .put(api_url + "/api/order/" + orderId, orderObject, { headers })
+        .then((response) => {
+          res.redirect("/orderDashboard");
+        })
+        .catch((error) => {
+          console.log(error);
+          res.render("error", { error });
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
 
 module.exports = router;
