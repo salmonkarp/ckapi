@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Customer = require("../models/customerModel");
+const Order = require("../models/orderModel");
 
 // routes - customer - get all
 router.get("/", async (req, res) => {
@@ -61,6 +62,14 @@ router.delete("/:id", async (req, res) => {
       return res
         .status(404)
         .json({ message: `cannot find customer with ID ${id}` });
+    }
+    const orderWithCustomer = await Order.findOne({
+      customerId: id,
+    });
+    if (orderWithCustomer) {
+      return res.status(400).json({
+        message: `Customer with ${id} is still in an order, cannot be deleted.`,
+      });
     }
     res.status(200).json(customer);
   } catch (error) {

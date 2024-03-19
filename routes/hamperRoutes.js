@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Hamper = require("../models/hamperModel");
+const Order = require("../models/orderModel");
 
 // routes - hamper - get all
 router.get("/", async (req, res) => {
@@ -71,6 +72,16 @@ router.delete("/:id", async (req, res) => {
         .status(404)
         .json({ message: `cannot find hamper with ID ${id}` });
     }
+
+    const orderWithHamper = await Order.findOne({
+      "hamperContent.hamperId": id,
+    });
+    if (orderWithHamper) {
+      return res.status(400).json({
+        message: `Hamper with ${id} is still in an order, cannot be deleted.`,
+      });
+    }
+
     res.status(200).json(hamper);
   } catch (error) {
     res.status(500).json({ message: error.message });

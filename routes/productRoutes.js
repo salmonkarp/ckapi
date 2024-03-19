@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const Product = require("../models/productModel");
-const Hamper = require("../models/hamperModel")
+const Hamper = require("../models/hamperModel");
+const Order = require("../models/orderModel");
 
 // routes - product - get all
 router.get("/", async (req, res) => {
@@ -72,9 +73,22 @@ router.delete("/:id", async (req, res) => {
         .json({ message: `cannot find product with ID ${id}` });
     }
 
-    const hamperWithProduct = await Hamper.findOne({ "contents.productId":id });
+    const hamperWithProduct = await Hamper.findOne({
+      "contents.productId": id,
+    });
     if (hamperWithProduct) {
-      return res.status(400).json({ message: `Product with ${ID} is still in a hamper, cannot be deleted.`})
+      return res.status(400).json({
+        message: `Product with ${id} is still in a hamper, cannot be deleted.`,
+      });
+    }
+
+    const orderWithProduct = await Order.findOne({
+      "productContent.productId": id,
+    });
+    if (orderWithProduct) {
+      return res.status(400).json({
+        message: `Product with ${id} is still in an order, cannot be deleted.`,
+      });
     }
 
     const deletedProduct = await Product.findByIdAndDelete(id);
