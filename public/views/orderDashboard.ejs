@@ -317,15 +317,15 @@
       window.location.href = domain
     }
 
-    const accordionItems = document.querySelectorAll('.accordion-collapse.realStuff')
+    // const accordionItems = document.querySelectorAll('.accordion-collapse.realStuff')
 
-    accordionItems.forEach((el)=>{
-        el.addEventListener('shown.bs.collapse',(e)=>{
-          console.log(window.scrollY, el.parentNode.offsetTop);
-          console.log(el.parentNode.offsetTop, window.scrollX);
-          window.scrollTo(window.scrollX, el.parentNode.offsetTop);
-        })
-    })
+    // accordionItems.forEach((el)=>{
+    //     el.addEventListener('shown.bs.collapse',(e)=>{
+    //       console.log(window.scrollY, el.parentNode.offsetTop);
+    //       console.log(el.parentNode.offsetTop, window.scrollX);
+    //       window.scrollTo(window.scrollX, el.parentNode.offsetTop);
+    //     })
+    // })
 
     function applyFilter() {
       let customerName = document.querySelector("#customerNameFilter").value.toLowerCase() || "";
