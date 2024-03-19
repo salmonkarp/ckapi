@@ -117,4 +117,58 @@ router.get("/editOrder/:id", (req, res) => {
     });
 });
 
+router.post("/editOrder/:id", (req, res) => {
+  console.log(req.body);
+  let orderId = req.params.id;
+  handleOrder(req.body)
+    .then((orderObject) => {
+      console.log(orderObject);
+      axios
+        .put(api_url + "/api/order/" + orderId, orderObject, { headers })
+        .then((response) => {
+          res.redirect("/orderDashboard");
+        })
+        .catch((error) => {
+          console.log(error);
+          res.render("error", { error });
+        });
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
+
+router.get("/deleteOrder/:id", (req, res) => {
+  let orderId = req.params.id;
+  axios
+    .get(api_url + "/api/aggregation/orderDetail/" + orderId, {
+      headers,
+    })
+    .then((response) => {
+      console.log(response.data);
+      let order = response.data;
+      res.render("orderDashboard_deleteOrder", { order });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error", { error });
+    });
+});
+
+router.post("/deleteOrder/:id", (req, res) => {
+  let orderId = req.params.id;
+  axios
+    .delete(api_url + "/api/order/" + orderId, { headers })
+    .then((response) => {
+      res.redirect("/orderDashboard");
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
+
+router.get("/sendOrder/:id", (req, res) => {});
+
 module.exports = router;

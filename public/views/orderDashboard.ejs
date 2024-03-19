@@ -56,25 +56,6 @@
       <button class="btn btn-primary text-center px-5" onclick="redirect('/orderDashboard/addOrder')">Add Order</button>
     </div>
 
-    <!-- Page Selector -->
-    <% if(totalPages > 1) { %>
-    <div class="container mx-auto mt-3 w-md-75">
-      <nav aria-label="Page navigation" class="mx-auto">
-        <ul class="pagination justify-content-center ">
-          <% if(page > 1) { %>
-          <li class="page-item"><a class="page-link" href="?page=<%= page-1 %>">Previous</a></li>
-          <% } %>
-          <% for(let i=0; i<totalPages; i++) { %>
-          <li class="page-item"><a class="page-link" href="?page=<%= i+1 %>"><%= i+1 %></a></li>
-          <% } %>
-          <% if(page < totalPages) { %>
-          <li class="page-item"><a class="page-link" href="?page=<%= page+1 %>">Next</a></li>
-          <% } %>
-        </ul>
-      </nav>
-    </div>
-    <% } %>
-
     <!-- Order Container -->
     <div class="container mt-4 w-md-75 mb-5">
       
@@ -90,7 +71,7 @@
               aria-expanded="true"
               aria-controls="collapse<%= order._id %>"
             >
-              Order by <%= order.customerName%> due on <%= order.deliveryDate %>
+              <%= order.deliveryDate%> - <%= order.customerName %> (<%= order.productContent.length + order.hamperContent.length %> items)
             </button>
           </h2>
           <div
@@ -109,7 +90,7 @@
                 </button>
                 <button 
                   class="btn btn-danger order-button btn-sm position-sticky end-0"  
-                  onclick="redirect('/orderDashboard/editOrder/<%= order._id %>')"
+                  onclick="redirect('/orderDashboard/deleteOrder/<%= order._id %>')"
                   >
                   <i class="fa-solid fa-trash"></i>
                 </button>
@@ -209,6 +190,25 @@
       </div>
       
     </div>
+
+    <!-- Page Selector -->
+    <% if(totalPages > 1) { %>
+      <div class="container mx-auto mt-3 w-md-75">
+        <nav aria-label="Page navigation" class="mx-auto">
+          <ul class="pagination justify-content-center ">
+            <% if(page > 1) { %>
+            <li class="page-item"><a class="page-link" href="?page=<%= page-1 %>">Previous</a></li>
+            <% } %>
+            <% for(let i=0; i<totalPages; i++) { %>
+            <li class="page-item"><a class="page-link" href="?page=<%= i+1 %>"><%= i+1 %></a></li>
+            <% } %>
+            <% if(page < totalPages) { %>
+            <li class="page-item"><a class="page-link" href="?page=<%= page+1 %>">Next</a></li>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+      <% } %>
 
   </body>
   <script
