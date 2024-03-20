@@ -184,11 +184,9 @@
 
                 Delivery Date: <%= invoice.deliveryDate %> <br>
                 Invoice Note: <%= invoice.details %> <br>
-                Is Sent: <%= invoice.isSent %> <br>
 
                 <div hidden id="customerName"><%= invoice.customerName %></div>
                 <div hidden id="deliveryDate"><%= invoice.deliveryDateOld.split('T')[0] %></div>
-                <div hidden id="isSent"><%= invoice.isSent %></div>
 
                 <div
                   class="table-responsive flipped-container"
@@ -300,8 +298,7 @@
       let customerName = document.querySelector("#customerNameFilter").value.toLowerCase() || "";
       let startDate = new Date(document.querySelector("#startDate").value || "1970-01-01");
       let endDate = new Date(document.querySelector("#endDate").value || "2050-12-31");
-      let isSent = document.querySelector("#isSent").checked;
-      console.log(customerName, startDate, endDate, isSent);
+      console.log(customerName, startDate, endDate);
       const contents = document.querySelectorAll(".realContents");
       contents.forEach((content) => {
           const currentCustomerName = content
@@ -309,9 +306,8 @@
             .textContent.toLowerCase();
           const currentDeliveryDate = new Date(content
             .querySelector("#deliveryDate").textContent);
-          const currentIsSent = content.querySelector("#isSent").textContent;
           console.log(currentCustomerName, customerName);
-          if (currentCustomerName.includes(customerName) && (currentDeliveryDate >= startDate && currentDeliveryDate <= endDate) && ((isSent === false && currentIsSent === 'false') || (isSent == true))) {
+          if (currentCustomerName.includes(customerName) && (currentDeliveryDate >= startDate && currentDeliveryDate <= endDate) ) {
             content.style.display = "";
           } else {
             content.style.display = "none";

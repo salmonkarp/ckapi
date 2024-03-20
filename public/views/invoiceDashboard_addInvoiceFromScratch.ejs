@@ -27,55 +27,48 @@
     <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
     <link rel="stylesheet" href="../styles/orderDashboard.css" />
     <link rel="shortcut icon" href="../icon.png" type="image/x-icon" />
-    <title>Add Order</title>
+    <title>Add Invoice From Scratch</title>
   </head>
 
   <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
-      <button
-        class="navbar-toggler ms-3"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto px-3">
-          <li class="nav-item">
-            <a href="/orderDashboard" class="nav-link">Orders</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/products" class="nav-link">Products</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/hampers" class="nav-link">Hampers</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/customers" class="nav-link">Customers</a>
-          </li>
-        </ul>
-      </div>
-      <div class="logout-container d-flex flex-row">
-        <p class="text-light m-0 me-3 align-middle py-2">Order Account </p>
-        <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
-      </div>
-    </nav>
+        <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto px-3">
+            <li class="nav-item">
+              <a href="/invoiceDashboard" class="nav-link">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/products" class="nav-link">Products</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout-container d-flex flex-row">
+          <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
+          <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
+        </div>
+        
+      </nav>
 
     <!-- Wrapper -->
     <form
       class="container mx-auto mt-5 row mb-lg-0 px-0"
       id="myForm"
-      action="/orderDashboard/addOrder"
+      action="/invoiceDashboard/addInvoiceFromScratch"
       method="post"
     >
       <!-- Left Side -->
       <div class="col-lg addOrderLeft mb-5">
-        <h1>➕Add Order🧾</h1>
+        <h1>➕Add Invoice🧾</h1>
         <br />
 
         <div class="sizeWarning">This sub-domain is not intended to be viewed in a small resolution. Please rotate your device to proceed.</div>
@@ -126,7 +119,7 @@
                 id="productContentInput"
                 class="form-select"
                 data-placeholder="Choose a product"
-                onchange="addProductToOrder()"
+                onchange="addProductToInvoice()"
               >
                 <option disabled selected value="null">Select a product</option>
                 <% products.forEach(product => { %>
@@ -138,7 +131,7 @@
               <button
                 class="btn btn-primary btn-sm form-control specialFocus"
                 type="button"
-                onclick="addProductToOrder()"
+                onclick="addProductToInvoice()"
               >
                 <i class="fa-solid fa-plus"></i>
               </button>
@@ -160,7 +153,7 @@
                 id="hamperContentInput"
                 class="form-select"
                 data-placeholder="Choose a hamper"
-                onchange="addHamperToOrder()"
+                onchange="addHamperToInvoice()"
               >
                 <option disabled selected value="null">Select a hamper</option>
                 <% hampers.forEach(hamper => { %>
@@ -172,7 +165,7 @@
               <button
                 class="btn btn-primary btn-sm form-control specialFocus"
                 type="button"
-                onclick="addHamperToOrder()"
+                onclick="addHamperToInvoice()"
               >
                 <i class="fa-solid fa-plus"></i>
               </button>
@@ -255,16 +248,16 @@
         </div>
         <br />
 
-        <!-- Order Discount -->
+        <!-- Invoice Discount -->
         <div class="form-group">
-          <label for="orderDiscount" class="form-label">Order Discount</label>
+          <label for="invoiceDiscount" class="form-label">Invoice Discount</label>
           <div class="input-group">
             <input
               type="number"
               class="form-control"
-              name="orderDiscount"
-              id="orderDiscount"
-              placeholder="Enter Order Discount"
+              name="invoiceDiscount"
+              id="invoiceDiscount"
+              placeholder="Enter Invoice Discount"
               step="0.01"
               min="0"
             />
@@ -273,15 +266,15 @@
         </div>
         <br />
 
-        <!-- Order Note -->
+        <!-- Invoice Note -->
         <div class="form-group">
-          <label for="orderNote" class="form-label">Order Note</label>
+          <label for="invoiceNote" class="form-label">Invoice Note</label>
           <input
             type="text"
             class="form-control"
-            name="orderNote"
-            id="orderNote"
-            placeholder="Enter Order Note"
+            name="invoiceNote"
+            id="invoiceNote"
+            placeholder="Enter Invoice Note"
           />
         </div>
 
@@ -299,16 +292,16 @@
           <button
             type="button"
             class="btn btn-primary form-btn ms-2"
-            onclick="redirect('/orderDashboard/products')"
+            onclick="redirect('/invoiceDashboard/products')"
           >
             Cancel
           </button>
         </div>
       </div>
 
-      <!-- Order Display -->
+      <!-- Invoice Display -->
       <div class="container col-lg border-lg-start ms-lg-5 ps-md-5">
-        <h3 class="text-center">Order Contents✍️</h3>
+        <h3 class="text-center">Invoice Contents✍️</h3>
         <div class="container table-responsive mt-4 px-0">
           <table
             class="table realContents w-100 mx-auto text-center align-middle"
@@ -405,7 +398,7 @@
       }, 20);
     }
 
-    function addProductToOrder() {
+    function addProductToInvoice() {
       var selectedProductId = document.getElementById(
         "productContentInput"
       ).value;
@@ -459,7 +452,7 @@
       document.getElementById("productContentInput").value = "null";
     }
 
-    function addHamperToOrder() {
+    function addHamperToInvoice() {
       var selectedHamperId = document.getElementById(
         "hamperContentInput"
       ).value;
