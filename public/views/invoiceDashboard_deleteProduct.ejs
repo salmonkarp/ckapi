@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
+    <link rel="stylesheet" href="../../styles/orderDashboard.css" />
+    <link rel="shortcut icon" href="../../icon.png" type="image/x-icon" />
+    <title>Delete Product</title>
+  </head>
+  <body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+        <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto px-3">
+            <li class="nav-item">
+              <a href="/invoiceDashboard" class="nav-link">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/products" class="nav-link">Products</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout-container d-flex flex-row">
+          <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
+          <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
+        </div>
+        
+    </nav>
+
+    <!-- Form -->
+    <div class="container mx-auto mt-5 d-flex flex-row justify-content-center">
+      <form
+        action="/invoiceDashboard/deleteProduct/<%= productId %>"
+        method="post"
+        class="w-lg-50"
+      >
+        <h1>❌Confirm Delete Product🍪</h1>
+        <br />
+        <p>
+          <strong>Ensure that no order/hamper includes this product. If so, this WILL crash the system.</strong><br>
+          Are you sure you want to delete this product? This cannot be undone.
+        </p>
+        <br>
+        <div class="table-responsive">
+          <table class="table">
+            <tr>
+              <th>Product Name</th>
+              <th>Product Prices</th>
+              <th>Current Stock</th>
+            </tr>
+            <tr>
+              <td><%= productData.name %></td>
+              <td>
+                <% Object.entries(productData.prices).forEach(([key, value]) =>
+                { %>
+                <strong><%= key %>:</strong> <%= value %> <br />
+                <% }) %>
+              </td>
+              <td><%= productData.currentStock %></td>
+            </tr>
+          </table>
+        </div>
+        <br />
+        <div class="container w-100 d-flex justify-content-end p-0">
+          <button type="submit" class="btn btn-danger form-btn">
+            Delete Product
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary form-btn ms-2"
+            onclick="redirect('/invoiceDashboard/products')"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+  <script>
+    function redirect(domain) {
+      window.location.href = domain;
+    }
+  </script>
+</html>
