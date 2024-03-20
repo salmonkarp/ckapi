@@ -29,7 +29,8 @@ app.use(express.static("public"));
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/public/views"));
-const userAuthentication = require("./helper_functions/userAuthentication");
+const userOrderAuthentication = require("./helper_functions/userOrderAuthentication");
+const userInvoiceAuthentication = require("./helper_functions/userInvoiceAuthentication");
 
 // // API Routes
 const wrapperRoute = require("./routes/wrapperRoute");
@@ -79,7 +80,9 @@ app.get("/error", (req, res) => {
 
 // Other Routes
 const orderRoutes = require("./siteRoutes/orderRoutes");
-app.use("/orderDashboard", userAuthentication, orderRoutes);
+const invoiceRoutes = require("./siteRoutes/invoiceRoutes")
+app.use("/orderDashboard", userOrderAuthentication, orderRoutes);
+app.use("/invoiceDashboard", userInvoiceAuthentication, invoiceRoutes);
 
 // connect database first, then listen to requests
 const uri = "mongodb+srv://" + dbUser + ":" + dbPassword + "@" + dbHost;

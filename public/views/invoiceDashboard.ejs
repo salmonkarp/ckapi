@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="../styles/orderDashboard.css" />
     <link rel="shortcut icon" href="../icon.png" type="image/x-icon">
-    <title>Order Dashboard</title>
+    <title>Invoice Dashboard</title>
   </head>
   <body>
     <%
@@ -29,35 +29,36 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto px-3">
           <li class="nav-item active">
-            <a href="/orderDashboard" class="nav-link">Orders</a>
+            <a href="/invoiceDashboard" class="nav-link">Invoices</a>
           </li>
           <li class="nav-item">
-            <a href="/orderDashboard/products" class="nav-link">Products</a>
+            <a href="/invoiceDashboard/products" class="nav-link">Products</a>
           </li>
           <li class="nav-item">
-            <a href="/orderDashboard/hampers" class="nav-link">Hampers</a>
+            <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
           </li>
           <li class="nav-item">
-            <a href="/orderDashboard/customers" class="nav-link">Customers</a>
+            <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
           </li>
         </ul>
       </div>
       <div class="logout-container d-flex flex-row">
-        <p class="text-light m-0 me-3 align-middle py-2">Order Account </p>
+        <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
         <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
       </div>
       
     </nav>
 
     <!-- Title -->
-    <h1 class="w-100 text-center mt-5 mb-4">Order Dashboard🧾</h1>
+    <h1 class="w-100 text-center mt-5 mb-4">Invoice Dashboard🧾</h1>
 
-    <!-- Add Order Button Container -->
+    <!-- Add Invoice Button Container -->
     <div class="container mt-4 d-flex justify-content-center ">
-      <button class="btn btn-primary text-center px-5" onclick="redirect('/orderDashboard/addOrder')">Add Order</button>
+      <button class="btn btn-primary text-center px-5 me-2" onclick="redirect('/invoiceDashboard/addInvoiceFromScratch')">Create Invoice from Scratch</button>
+      <button class="btn btn-primary text-center px-5 ms-2" onclick="redirect('/invoiceDashboard/addInvoiceFromSentOrder')">Create Invoice from Sent Orders</button>
     </div>
 
-    <!-- Order Container -->
+    <!-- Invoice Container -->
     <div class="container mt-2 w-md-75 mb-5">
 
       <!-- Filter -->
@@ -119,13 +120,6 @@
                     
                   </div>
                 </div>
-                
-                <div class="row mx-auto mt-3">
-                  <div class="col form-check form-switch ps-2">
-                    <input class="form-check-input ms-1" type="checkbox" id="isSent" name="isSent" style="height: 75%; width: 40px">
-                    <label class="form-check-label" for="isSent" style="white-space: pre-wrap; font-size: 1rem;">  Include Sent Orders?</label>
-                  </div>
-                </div>
 
                 <div class="container d-flex justify-content-end gap-2">
                   <button type="button" class="btn btn-primary btn-sm order-button" id="applyFilter" onclick="applyFilter()">Apply</button>
@@ -144,25 +138,25 @@
               class="accordion-header bg-light text-center" 
               id="mainHeader"
               style="padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x); font-weight: 500; font-size: 1.2rem;">
-              List of Orders
+              List of Invoices
             </div>
           </div>
-          <% slicedData.forEach(order => { %>
+          <% slicedData.forEach(invoice => { %>
           <div class="accordion-item realContents">
             <h2 class="accordion-header" id="headingOne">
               <button
                 class="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#collapse<%= order._id %>"
+                data-bs-target="#collapse<%= invoice._id %>"
                 aria-expanded="true"
-                aria-controls="collapse<%= order._id %>"
+                aria-controls="collapse<%= invoice._id %>"
               >
-                <%= order.deliveryDate%> - <%= order.customerName %> (<%= order.productContent.length + order.hamperContent.length %> items)
+                <%= invoice.deliveryDate%> - <%= invoice.customerName %> (<%= invoice.productContent.length + invoice.hamperContent.length %> items)
               </button>
             </h2>
             <div
-              id="collapse<%= order._id %>"
+              id="collapse<%= invoice._id %>"
               class="accordion-collapse collapse realStuff"
               aria-labelledby="headingOne"
               data-bs-parent="#accordionExample"
@@ -171,36 +165,30 @@
                 <div class="container button-container-1">
                   <button 
                     class="btn btn-primary order-button btn-sm position-sticky end-0" 
-                    onclick="redirect('/orderDashboard/editOrder/<%= order._id %>')"
+                    onclick="redirect('/invoiceDashboard/editInvoice/<%= invoice._id %>')"
                     >
                       <i class="fa-solid fa-pen-to-square"></i>
                   </button>
                   <button 
                     class="btn btn-danger order-button btn-sm position-sticky end-0"  
-                    onclick="redirect('/orderDashboard/deleteOrder/<%= order._id %>')"
+                    onclick="redirect('/invoiceDashboard/deleteInvoice/<%= invoice._id %>')"
                     >
                     <i class="fa-solid fa-trash"></i>
-                  </button>
-                  <button 
-                    class="btn btn-success order-button btn-sm position-sticky end-0"  
-                    onclick="redirect('/orderDashboard/sendOrder/<%= order._id %>')"
-                    >
-                    <i class="fa-solid fa-paper-plane"></i>
                   </button>
                 </div>
                 
 
-                Customer Name: <%= order.customerName %> <br>
-                Customer Address: <%= order.customerAddress %> <br>
-                Customer Note: <%= order.customerNote %> <br> <br>
+                Customer Name: <%= invoice.customerName %> <br>
+                Customer Address: <%= invoice.customerAddress %> <br>
+                Customer Note: <%= invoice.customerNote %> <br> <br>
 
-                Delivery Date: <%= order.deliveryDate %> <br>
-                Order Note: <%= order.details %> <br>
-                Is Sent: <%= order.isSent %> <br>
+                Delivery Date: <%= invoice.deliveryDate %> <br>
+                Invoice Note: <%= invoice.details %> <br>
+                Is Sent: <%= invoice.isSent %> <br>
 
-                <div hidden id="customerName"><%= order.customerName %></div>
-                <div hidden id="deliveryDate"><%= order.deliveryDateOld.split('T')[0] %></div>
-                <div hidden id="isSent"><%= order.isSent %></div>
+                <div hidden id="customerName"><%= invoice.customerName %></div>
+                <div hidden id="deliveryDate"><%= invoice.deliveryDateOld.split('T')[0] %></div>
+                <div hidden id="isSent"><%= invoice.isSent %></div>
 
                 <div
                   class="table-responsive flipped-container"
@@ -218,7 +206,7 @@
                     </thead>
                     <tbody class="table-group-divider">
                       <% var total = 0; %>
-                      <% order.productContent.forEach(product => { %>
+                      <% invoice.productContent.forEach(product => { %>
                         <tr>
                           <td><%= product.name %></td>
                           <% if(product.discount === 0) { %>
@@ -234,7 +222,7 @@
                           <% total += subtotal * product.quantity; %>
                         </tr>
                       <% }) %>
-                      <% order.hamperContent.forEach(hamper => { %>
+                      <% invoice.hamperContent.forEach(hamper => { %>
                         <tr>
                           <td><%= hamper.name %></td>
                           <% if(hamper.discount === 0) { %>
@@ -257,14 +245,14 @@
                         <td><%= formatRupiah(total) %></td>
                       </tr>
 
-                      <% if(order.orderDiscount !== 0) { %>
+                      <% if(invoice.invoiceDiscount !== 0) { %>
                         <tr>
-                          <td colspan="3" style="text-align: right;"><strong>Discount (<%= order.orderDiscount %>%)</strong></td>
-                          <td><%= formatRupiah(parseInt(order.orderDiscount * total / 100)) %></td>
+                          <td colspan="3" style="text-align: right;"><strong>Discount (<%= invoice.invoiceDiscount %>%)</strong></td>
+                          <td><%= formatRupiah(parseInt(invoice.invoiceDiscount * total / 100)) %></td>
                         </tr>
                         <tr>
                           <td colspan="3" style="text-align: right;"><strong>Final Total</strong></td>
-                          <td><%= formatRupiah(total - parseInt(order.orderDiscount * total / 100)) %></td>
+                          <td><%= formatRupiah(total - parseInt(invoice.invoiceDiscount * total / 100)) %></td>
                         </tr>
                       <% } %>
                     </tbody>

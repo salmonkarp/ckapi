@@ -97,6 +97,20 @@ router.get("/orderDetail", async (req, res) => {
   }
 });
 
+router.get("/invoiceDetail", async (req, res) => {
+  try {
+    const invoices = await Invoice.find({});
+    const modifiedInvoices = await Promise.all(
+      invoices.map(async (invoice) => {
+        return await aggregateObject(invoice);
+      })
+    );
+    res.status(200).json(modifiedInvoices);
+  } catch (error) {
+    res.status(500).json({message: error.message });
+  }
+})
+
 router.get("/orderDetail/:id", async (req, res) => {
   try {
     const { id } = req.params;

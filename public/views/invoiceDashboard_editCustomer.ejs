@@ -10,50 +10,47 @@
       crossorigin="anonymous"
     />
     <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
-    <link rel="stylesheet" href="../styles/orderDashboard.css" />
-    <link rel="shortcut icon" href="../icon.png" type="image/x-icon" />
-    <title>Add Customer</title>
+    <link rel="stylesheet" href="../../styles/orderDashboard.css" />
+    <link rel="shortcut icon" href="../../icon.png" type="image/x-icon" />
+    <title>Edit Customer</title>
   </head>
   <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
-      <button
-        class="navbar-toggler ms-3"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto px-3">
-          <li class="nav-item">
-            <a href="/orderDashboard" class="nav-link">Orders</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/products" class="nav-link">Products</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/hampers" class="nav-link">Hampers</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/customers" class="nav-link">Customers</a>
-          </li>
-        </ul>
-      </div>
-      <div class="logout-container d-flex flex-row">
-        <p class="text-light m-0 me-3 align-middle py-2">Order Account </p>
-        <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
-      </div>
-    </nav>
+        <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto px-3">
+            <li class="nav-item">
+              <a href="/invoiceDashboard" class="nav-link">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/products" class="nav-link">Products</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout-container d-flex flex-row">
+          <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
+          <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
+        </div>
+        
+      </nav>
 
     <!-- Form -->
     <div class="container mx-auto mt-5 d-flex flex-row justify-content-center">
-      <form action="/orderDashboard/addCustomer" method="post" class="w-lg-50">
-        <h1>➕Add Customer👤</h1>
+      <form
+        action="/invoiceDashboard/editCustomer/<%= customer._id %>"
+        method="post"
+        class="w-lg-50"
+      >
+        <h1>✍️Edit Customer👤</h1>
         <br />
         <div class="form-group">
           <label for="name">Customer Name</label>
@@ -63,6 +60,7 @@
             id="name"
             class="form-control"
             placeholder="Enter customer name"
+            value="<%= customer.name %>"
             required
           />
         </div>
@@ -77,6 +75,7 @@
             id="address"
             class="form-control"
             placeholder="Enter customer address"
+            value="<%=customer.address%>"
           />
         </div>
         <br />
@@ -90,6 +89,7 @@
             id="note"
             class="form-control"
             placeholder="Enter special note"
+            value="<%= customer.note %>"
           />
         </div>
         <br />

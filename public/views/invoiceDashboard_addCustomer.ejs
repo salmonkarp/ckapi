@@ -17,37 +17,30 @@
   <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
-      <button
-        class="navbar-toggler ms-3"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto px-3">
-          <li class="nav-item">
-            <a href="/orderDashboard" class="nav-link">Orders</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/products" class="nav-link">Products</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/hampers" class="nav-link">Hampers</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/customers" class="nav-link">Customers</a>
-          </li>
-        </ul>
-      </div>
-      <div class="logout-container d-flex flex-row">
-        <p class="text-light m-0 me-3 align-middle py-2">Order Account </p>
-        <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
-      </div>
+        <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto px-3">
+            <li class="nav-item">
+              <a href="/invoiceDashboard" class="nav-link">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/products" class="nav-link">Products</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout-container d-flex flex-row">
+          <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
+          <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
+        </div>
+        
     </nav>
 
     <!-- Form -->
@@ -100,7 +93,7 @@
           <button
             type="button"
             class="btn btn-primary form-btn ms-2"
-            onclick="redirect('/orderDashboard/customers')"
+            onclick="redirect('/invoiceDashboard/customers')"
           >
             Cancel
           </button>

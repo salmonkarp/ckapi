@@ -27,37 +27,30 @@
     style: 'currency', currency: 'IDR' }); } %>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
-      <button
-        class="navbar-toggler ms-3"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto px-3">
           <li class="nav-item">
-            <a href="/orderDashboard" class="nav-link">Orders</a>
+            <a href="/invoiceDashboard" class="nav-link">Invoices</a>
           </li>
           <li class="nav-item active">
-            <a href="/orderDashboard/products" class="nav-link">Products</a>
+            <a href="/invoiceDashboard/products" class="nav-link">Products</a>
           </li>
           <li class="nav-item">
-            <a href="/orderDashboard/hampers" class="nav-link">Hampers</a>
+            <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
           </li>
           <li class="nav-item">
-            <a href="/orderDashboard/customers" class="nav-link">Customers</a>
+            <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
           </li>
         </ul>
       </div>
       <div class="logout-container d-flex flex-row">
-        <p class="text-light m-0 me-3 align-middle py-2">Order Account </p>
+        <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
         <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
       </div>
+      
     </nav>
 
     <!-- Title -->

@@ -96,14 +96,14 @@ const invoiceSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isSent: {
-      type: Boolean,
-      default: false,
-    },
     details: {
       type: String,
       default: "",
     },
+    oldProductId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    }
   },
   {
     timestamps: true,
