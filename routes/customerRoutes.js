@@ -57,7 +57,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const customer = await Customer.findByIdAndDelete(id);
+    let customer = await Customer.findById(id);
     if (!customer) {
       return res
         .status(404)
@@ -71,6 +71,7 @@ router.delete("/:id", async (req, res) => {
         message: `Customer with ${id} is still in an order, cannot be deleted.`,
       });
     }
+    customer = await Customer.findByIdAndDelete(id);
     res.status(200).json(customer);
   } catch (error) {
     res.status(500).json({ message: error.message });

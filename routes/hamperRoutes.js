@@ -66,7 +66,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const hamper = await Hamper.findByIdAndDelete(id);
+    let hamper = await Hamper.findById(id);
     if (!hamper) {
       return res
         .status(404)
@@ -81,6 +81,7 @@ router.delete("/:id", async (req, res) => {
         message: `Hamper with ${id} is still in an order, cannot be deleted.`,
       });
     }
+    hamper = await Hamper.findByIdAndDelete(id);
 
     res.status(200).json(hamper);
   } catch (error) {
