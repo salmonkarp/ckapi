@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const productRoutes = require("./invoiceRoutes_product");
-// const hamperRoutes = require("./invoiceRoutes_hamper");
+const hamperRoutes = require("./invoiceRoutes_hamper");
 const customerRoutes = require("./invoiceRoutes_customer");
 // const invoiceRoutes = require("./invoiceRoutes_invoice");
 
@@ -85,7 +85,7 @@ router.get("/customers", (req, res) => {
 });
 
 router.use("/", productRoutes);
-// router.use("/", hamperRoutes);
+router.use("/", hamperRoutes);
 router.use("/", customerRoutes);
 // router.use("/", invoiceRoutes);
 

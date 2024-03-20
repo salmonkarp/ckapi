@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
+    <link rel="stylesheet" href="../../styles/orderDashboard.css" />
+    <link rel="shortcut icon" href="../../icon.png" type="image/x-icon" />
+    <title>Edit Hamper</title>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+        <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto px-3">
+            <li class="nav-item">
+              <a href="/invoiceDashboard" class="nav-link">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/products" class="nav-link">Products</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout-container d-flex flex-row">
+          <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
+          <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
+        </div>
+        
+    </nav>
+
+    <!-- Form -->
+    <div
+      class="container mx-auto mt-5 d-flex flex-row justify-content-center w-100 w-md-50"
+    >
+      <form
+        action="/invoiceDashboard/editHamper/<%= hamperDetails._id %>"
+        method="post"
+        class="w-lg-50"
+        id="myForm"
+      >
+        <h1>✍️Edit Hamper📦</h1>
+        <br />
+
+        <!-- Name -->
+        <div class="form-group">
+          <label for="name">Hamper Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            class="form-control"
+            placeholder="Enter hamper name"
+            value="<%= hamperDetails.name %>"
+            required
+          />
+        </div>
+        <br />
+
+        <!-- Contents -->
+        <div class="form-group">
+          <label for="contents">Contents</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col mx-0 px-0 pe-2">
+              <select
+                name="contentInput"
+                id="contentInput"
+                class="form-select"
+                data-placeholder="Choose a product"
+                onchange="advanceTab(this)"
+              >
+                <option disabled selected value="null">Select a product</option>
+                <% slicedData.forEach(product => { %>
+                <option value="<%= product._id %>"><%= product.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="col-2 col-sm-1 mx-0 px-0">
+              <button
+                class="btn btn-primary btn-sm form-control specialFocus"
+                type="button"
+                onclick="addProductToHamper()"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div>
+          </div>
+
+          <br />
+          <!-- Current Contents -->
+          <div class="container table-responsive">
+            <table class="table realContents w-75 mx-auto">
+              <tbody
+                class="realContentsBody text-center align-content-center border-top"
+              >
+                <% hamperDetails.contents.forEach(content => { %>
+                <tr>
+                  <td class="col-6 align-middle text-start">
+                    <%= content.productId.name %>
+                  </td>
+                  <td class="col-1 align-middle"><%= content.quantity %></td>
+                  <td class="col-5 align-middle text-end">
+                    <button
+                      class="btn btn-success btn-sm"
+                      type="button"
+                      onclick="addQuantity(this)"
+                    >
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <button
+                      class="btn btn-danger btn-sm"
+                      type="button"
+                      onclick="decreaseQuantity(this)"
+                    >
+                      <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <input
+                      type="hidden"
+                      name="quantities[]"
+                      value="<%= content.quantity %>"
+                    />
+                    <input
+                      type="hidden"
+                      name="contents[]"
+                      value="<%= content.productId._id %>"
+                    />
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Prices -->
+        <div class="form-group price-group">
+          <label for="prices">Prices</label>
+        </div>
+
+        <br />
+
+        <!-- Add/Remove Price Buttons -->
+        <button
+          class="btn btn-secondary form-btn"
+          onclick="addPrice()"
+          type="button"
+        >
+          Add Price Field
+        </button>
+        <button
+          class="btn btn-secondary form-btn"
+          onclick="removePrice()"
+          type="button"
+        >
+          Remove Price Field
+        </button>
+
+        <br />
+        <br />
+
+        <!-- Submit Buttons -->
+        <div class="container w-100 d-flex justify-content-end p-0">
+          <button
+            type="button"
+            class="btn btn-primary form-btn"
+            onclick="validateContents()"
+          >
+            Submit
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary form-btn ms-2"
+            onclick="redirect('/invoiceDashboard/hampers')"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </body>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+  <script>
+    function redirect(domain) {
+      window.location.href = domain;
+    }
+
+    function addPrice() {
+      const pricesContainer = document.querySelector(".price-group");
+      const existingPairs = pricesContainer.querySelectorAll(".row.mx-0.gap-2").length;
+      const newPricePair = document.createElement("div");
+      newPricePair.classList.add("row", "px-0", "mx-0", "gap-2");
+      newPricePair.innerHTML = `
+                  <input type="text" name="priceType${
+                    existingPairs + 1
+                  }" placeholder="Price Type ${
+        existingPairs + 1
+      }" class="form-control col" required>
+                  <input type="number" name="priceValue${
+                    existingPairs + 1
+                  }" placeholder="Price Value ${
+        existingPairs + 1
+      }" class="form-control col" required>
+              `;
+      pricesContainer.appendChild(newPricePair);
+    }
+
+    function removePrice() {
+      const pricesContainer = document.querySelector(".price-group");
+      const existingPairs = pricesContainer.querySelectorAll(".row").length;
+      if (existingPairs > 1) {
+        pricesContainer.removeChild(pricesContainer.lastChild);
+      }
+    }
+
+    $("#contentInput").select2({
+      theme: "bootstrap-5",
+      width: $(this).data("width")
+        ? $(this).data("width")
+        : $(this).hasClass("w-100")
+        ? "100%"
+        : "style",
+      placeholder: $(this).data("placeholder"),
+    });
+
+    function advanceTab(el) {
+      let nextBtn = el.parentElement.parentElement.querySelector(".btn");
+      console.log(nextBtn);
+      nextBtn.setAttribute("tabIndex", "0");
+      setTimeout(function () {
+        nextBtn.focus();
+      }, 20);
+    }
+
+    function addProductToHamper() {
+      var selectedProductId = document.getElementById("contentInput").value;
+      var selectedProductName =
+        document.getElementById("contentInput").options[
+          document.getElementById("contentInput").selectedIndex
+        ].text;
+      // var quantity = parseFloat(document.getElementById("quantityInput").value);
+      if (!selectedProductId || selectedProductId === "null") {
+        alert("Please select a product and enter a product.");
+        return;
+      }
+
+      // document.getElementById("quantityInput").value = "";
+
+      var realContents = document.querySelector(".realContentsBody");
+
+      var newProductEntry = document.createElement("tr");
+
+      var nameColumn = document.createElement("td");
+      var quantityColumn = document.createElement("td");
+      var deleteColumn = document.createElement("td");
+
+      nameColumn.innerHTML = selectedProductName;
+      quantityColumn.innerHTML = 1;
+      deleteColumn.innerHTML = `
+      <button class="btn btn-success btn-sm" type="button" onclick="addQuantity(this)">
+        <i class="fa-solid fa-plus"></i>
+      </button>
+      <button class="btn btn-danger btn-sm" type="button" onclick="decreaseQuantity(this)">
+        <i class="fa-solid fa-minus"></i>
+      </button>
+      <input type="hidden" name="quantities[]" value=1>
+      <input type="hidden" name="contents[]" value="${selectedProductId}">
+      `;
+
+      nameColumn.classList.add("col-6", "align-middle", "text-start");
+      quantityColumn.classList.add("col-1", "align-middle");
+      deleteColumn.classList.add("col-5", "align-middle", "text-end");
+
+      newProductEntry.appendChild(nameColumn);
+      newProductEntry.appendChild(quantityColumn);
+      newProductEntry.appendChild(deleteColumn);
+
+      realContents.appendChild(newProductEntry);
+
+      const value_to_remove = document.querySelector(
+        `option[value="${selectedProductId}"]`
+      );
+      console.log(value_to_remove, "removed");
+      value_to_remove.remove();
+      document.getElementById("contentInput").value = "null";
+    }
+
+    function addQuantity(el) {
+      trElement = el.parentElement.parentElement;
+      quantityDisplay = trElement.querySelector(".col-1");
+      quantityDisplay.innerHTML = parseInt(quantityDisplay.innerHTML) + 1;
+      realQuantityInput = trElement.querySelector("input[name='quantities[]']");
+      realQuantityInput.value = parseInt(realQuantityInput.value) + 1;
+    }
+
+    function decreaseQuantity(el) {
+      trElement = el.parentElement.parentElement;
+      quantityDisplay = trElement.querySelector(".col-1");
+      if (parseInt(quantityDisplay.innerHTML) === 1) {
+        removeThisProduct(el);
+        return;
+      }
+      quantityDisplay.innerHTML = parseInt(quantityDisplay.innerHTML) - 1;
+      realQuantityInput = trElement.querySelector("input[name='quantities[]']");
+      realQuantityInput.value = parseInt(realQuantityInput.value) - 1;
+    }
+
+
+    function removeThisProduct(el) {
+      trElement = el.parentElement.parentElement;
+      productId = el.nextElementSibling.nextElementSibling.value;
+      productName = trElement.querySelector(".col-6").innerHTML;
+
+      newOption = document.createElement("option");
+      newOption.value = productId;
+      newOption.text = productName;
+
+      selectElement = document.getElementById("contentInput");
+      selectElement.add(newOption);
+
+      var options = Array.from(selectElement.options);
+      options.sort(function (a, b) {
+        return a.text.localeCompare(b.text);
+      });
+
+      selectElement.innerHTML = "";
+      options.forEach(function (option) {
+        selectElement.add(option);
+      });
+      productId = trElement.remove();
+    }
+
+    function validateContents() {
+      let contents = document.querySelector(".realContentsBody");
+      if (!document.querySelector("#myForm").reportValidity()) {
+        return;
+      }
+      if (contents.children.length) {
+        document.querySelector("form").submit();
+      } else {
+        alert("Contents must have at least one product!");
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const priceGroup = document.querySelector('.price-group');
+      const orderDataPrices = <%- JSON.stringify(hamperDetails.prices) %> ;
+
+      // Function to populate input fields with values from the OrderData.prices object
+      function populatePrices(pricesObject) {
+          Object.entries(pricesObject).forEach(([key, value], index) => {
+              const rowDiv = document.createElement('div');
+              rowDiv.classList.add('row','mx-0','gap-2');
+
+              const priceTypeInput = document.createElement('input');
+              priceTypeInput.type = 'text';
+              priceTypeInput.name = `priceType${index + 1}`;
+              priceTypeInput.placeholder = `Price Type ${index + 1}`;
+              priceTypeInput.classList.add('form-control', 'col');
+              priceTypeInput.value = key;
+              rowDiv.appendChild(priceTypeInput);
+
+              const priceValueInput = document.createElement('input');
+              priceValueInput.type = 'number';
+              priceValueInput.name = `priceValue${index + 1}`;
+              priceValueInput.placeholder = `Price Value ${index + 1}`;
+              priceValueInput.classList.add('form-control', 'col');
+              priceValueInput.value = value;
+              rowDiv.appendChild(priceValueInput);
+
+              priceGroup.appendChild(rowDiv);
+          });
+      }
+
+      // Call the function to populate input fields with values from OrderData.prices
+      populatePrices(orderDataPrices);
+
+      const selectedProducts = <%- JSON.stringify(hamperDetails.contents) %> ;
+      selectedProducts.forEach(product => {
+        let productId = product.productId._id;
+        const value_to_remove = document.querySelector(
+          `option[value="${productId}"]`
+        );
+        value_to_remove.remove();
+      })
+      document.getElementById("contentInput").value = "null";
+    });
+  </script>
+</html>
