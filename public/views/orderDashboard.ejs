@@ -168,6 +168,7 @@
               data-bs-parent="#accordionExample"
             >
               <div class="accordion-body position-relative">
+                <% if(!order.isSent) {%>
                 <div class="container button-container-1">
                   <button 
                     class="btn btn-primary order-button btn-sm position-sticky end-0" 
@@ -188,6 +189,7 @@
                     <i class="fa-solid fa-paper-plane"></i>
                   </button>
                 </div>
+                <% } %>
                 
 
                 Customer Name: <%= order.customerName %> <br>
@@ -196,7 +198,11 @@
 
                 Delivery Date: <%= order.deliveryDate %> <br>
                 Order Note: <%= order.details %> <br>
-                Is Sent: <%= order.isSent %> <br>
+                <% if(!order.isSent) {%>
+                  
+                <% } else { %>
+                  <strong>This order has been sent, and thus cannot be modified. </strong> <br>
+                <% } %>
 
                 <div hidden id="customerName"><%= order.customerName %></div>
                 <div hidden id="deliveryDate"><%= order.deliveryDateOld.split('T')[0] %></div>

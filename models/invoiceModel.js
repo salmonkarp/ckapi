@@ -109,6 +109,10 @@ const invoiceSchema = mongoose.Schema(
     oldProductId: {
       type: mongoose.Schema.Types.ObjectId,
       default: null,
+    },
+    modified: {
+      type: Boolean,
+      default: false,
     }
   },
   {

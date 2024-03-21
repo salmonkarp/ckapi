@@ -7,12 +7,11 @@ const headers = {
   "x-api-key": api_key,
 };
 
-async function handleOrder(body) {
+async function handleInvoice(body) {
   let returnObject = {};
-  returnObject.invoiceDiscount = parseFloat(body.orderDiscount) || 0;
+  returnObject.invoiceDiscount = parseFloat(body.invoiceDiscount) || 0;
   returnObject.details = body.invoiceNote || "";
   returnObject.deliveryDate = body.deliveryDate || Date.now();
-  returnObject.oldProductId = body.oldProductId || null;
 
   returnObject.productContent = [];
   returnObject.hamperContent = [];
@@ -42,11 +41,57 @@ async function handleOrder(body) {
       });
     }
   });
+  let response;
+  if(body.invoiceType === 'taken'){
+    returnObject.oldProductId = body.chosenOrder;
+    returnObject.modified = false;
+    response = await axios.get(api_url + "/api/order/" + body.chosenOrder, {headers});
+    if(response.data.details !== returnObject.details) {
+      returnObject.modified = true
+      console.log('details');
+    }
+    if(response.data.deliveryDate.split('T')[0] !== returnObject.deliveryDate) {
+      returnObject.modified = true
+      console.log('date');
+    }
+    if(response.data.orderDiscount !== returnObject.invoiceDiscount) {
+      returnObject.modified = true
+      console.log('disc', response.data.orderDiscount, returnObject.invoiceDiscount)
+    }
+    let cleanArr1 = response.data.productContent.map(item => {
+      const { _id, ...rest} = item;
+      return rest;
+    })
+    let cleanArr2 = response.data.hamperContent.map(item => {
+      const { _id, ...rest} = item;
+      return rest;
+    })
+    let str1 = JSON.stringify(cleanArr1.sort());
+    let str2 = JSON.stringify(returnObject.productContent.sort());
+    let str3 = JSON.stringify(cleanArr2.sort());
+    let str4 = JSON.stringify(returnObject.hamperContent.sort());
+    if(str1 !== str2 || str3 !== str4){
+      returnObject.modified = true;
+      console.log("hmp/prod");
+    }
 
-  if (body.customerType === "existing") {
+    let modifiedOrder = response.data;
+    modifiedOrder.isConverted = true;
+    axios.put(api_url + "/api/order/" + body.chosenOrder, modifiedOrder, {headers});
+    
+  }
+
+  if (body.customerType === "existing" && response) {
+    returnObject.customerId = body.existingCustomer;
+    if(response.data.customerId !== returnObject.customerId) {
+      returnObject.modified = true;
+    }
+    return returnObject;
+  } else if (body.customerType === "existing") {
     returnObject.customerId = body.existingCustomer;
     return returnObject;
   } else {
+    returnObject.modified = true;
     let customerObject = {
       name: body.customerName,
       address: body.customerAddress,
@@ -68,4 +113,4 @@ async function handleOrder(body) {
   }
 }
 
-module.exports = handleOrder;
+module.exports = handleInvoice;

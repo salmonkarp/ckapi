@@ -30,6 +30,7 @@ function fetchFullData() {
       hampers.sort((a, b) => a.name.localeCompare(b.name));
       customers.sort((a, b) => a.name.localeCompare(b.name));
       const filteredOrders = orders.filter(obj => obj.isSent === true);
+      filteredOrders.sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
 
       return { products, hampers, customers, filteredOrders };
     })
@@ -47,6 +48,7 @@ function fetchFullFullData(invoiceId) {
   promises.push(
     axios.get(api_url + "/api/aggregation/invoiceDetail/" + invoiceId, { headers })
   );
+  promises.push(axios.get(api_url + "/api/aggregation/orderDetail", { headers }));
 
   return Promise.all(promises)
     .then((responses) => {
@@ -54,12 +56,15 @@ function fetchFullFullData(invoiceId) {
       const hampers = responses[1].data;
       const customers = responses[2].data;
       const invoice = responses[3].data;
+      const orders = responses[4].data;
 
       products.sort((a, b) => a.name.localeCompare(b.name));
       hampers.sort((a, b) => a.name.localeCompare(b.name));
       customers.sort((a, b) => a.name.localeCompare(b.name));
+      const filteredOrders = orders.filter(obj => obj.isSent === true);
+      filteredOrders.sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
 
-      return { products, hampers, customers, invoice };
+      return { products, hampers, customers, invoice, filteredOrders };
     })
     .catch((error) => {
       console.log(error);
@@ -67,14 +72,15 @@ function fetchFullFullData(invoiceId) {
     });
 }
 
-router.get("/addInvoiceFromScratch", (req, res) => {
+router.get("/addInvoice", (req, res) => {
   fetchFullData()
     .then((combinedData) => {
-      res.render("invoiceDashboard_addInvoiceFromScratch", {
+      let realFiltered = combinedData.filteredOrders.filter(obj => obj.isConverted === false);
+      res.render("invoiceDashboard_addInvoice", {
         products: combinedData.products,
         hampers: combinedData.hampers,
         customers: combinedData.customers,
-        orders: combinedData.filteredOrders,
+        orders: realFiltered,
       });
     })
     .catch((error) => {
@@ -83,22 +89,7 @@ router.get("/addInvoiceFromScratch", (req, res) => {
     });
 });
 
-router.get("/addInvoiceFromSentOrder", (req, res) => {
-    fetchFullData()
-      .then((combinedData) => {
-        res.render("invoiceDashboard_addInvoiceFromSentOrder", {
-          products: combinedData.products,
-          hampers: combinedData.hampers,
-          customers: combinedData.customers,
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-        res.render("error", { error });
-      });
-  });
-
-router.post("/addInvoiceFromScratch", async (req, res) => {
+router.post("/addInvoice", async (req, res) => {
   console.log(req.body);
   handleInvoice(req.body)
     .then((invoiceObject) => {
@@ -120,15 +111,16 @@ router.post("/addInvoiceFromScratch", async (req, res) => {
 });
 
 router.get("/editInvoice/:id", (req, res) => {
-// add matching function to indicate if this invoice has been modified, then add option to match?
   let invoiceId = req.params.id;
   fetchFullFullData(invoiceId)
     .then((combinedData) => {
+      let realFiltered = combinedData.filteredOrders;
       res.render("invoiceDashboard_editInvoice", {
         products: combinedData.products,
         hampers: combinedData.hampers,
         customers: combinedData.customers,
         invoiceData: combinedData.invoice,
+        orders: realFiltered,
       });
     })
     .catch((error) => {
@@ -138,7 +130,6 @@ router.get("/editInvoice/:id", (req, res) => {
 });
 
 router.post("/editInvoice/:id", (req, res) => {
-    // add matching function to indicate if this invoice has been modified, then add option to match?
   console.log(req.body);
   let invoiceId = req.params.id;
   handleInvoice(req.body)
@@ -177,8 +168,30 @@ router.get("/deleteInvoice/:id", (req, res) => {
     });
 });
 
-router.post("/deleteInvoice/:id", (req, res) => {
+router.get("/deleteDangerous/:id", (req, res) => {
   let invoiceId = req.params.id;
+  axios
+    .delete(api_url + "/api/invoice/" + invoiceId, { headers })
+    .then((response) => {
+      res.redirect("/invoiceDashboard");
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+});
+
+router.post("/deleteInvoice/:id", async (req, res) => {
+  let invoiceId = req.params.id;
+  let chosenOrder = req.body.chosenOrder;
+  if(chosenOrder){
+    let response = await axios.get(api_url + "/api/order/" + chosenOrder, {headers});
+    response.data.isConverted = false;
+    console.log(response.data);
+    await axios.put(api_url + "/api/order/" + chosenOrder, response.data, {headers});
+  }
+  
+
   axios
     .delete(api_url + "/api/invoice/" + invoiceId, { headers })
     .then((response) => {

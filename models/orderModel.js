@@ -117,6 +117,10 @@ const orderSchema = mongoose.Schema(
       type: String,
       default: "",
     },
+    isConverted: {
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,

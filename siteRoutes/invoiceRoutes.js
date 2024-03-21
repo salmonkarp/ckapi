@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
     })
     .then((response) => {
       invoiceArray.push(response.data);
-      const slicedData = invoiceArray[0];
+      const slicedData = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
       res.render("invoiceDashboard", { slicedData });
     })
     .catch((error) => {

@@ -25,61 +25,172 @@
       referrerpolicy="no-referrer"
     />
     <!-- <link rel="stylesheet" href="../styles/main.css" /> -->
-    <link rel="stylesheet" href="../../styles/orderDashboard.css" />
+    <link rel="stylesheet" href="../styles/orderDashboard.css" />
     <link rel="shortcut icon" href="../icon.png" type="image/x-icon" />
-    <title>Edit Order</title>
+    <title>Add Invoice</title>
   </head>
 
   <body>
     <!-- Header -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
-      <button
-        class="navbar-toggler ms-3"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto px-3">
-          <li class="nav-item">
-            <a href="/orderDashboard" class="nav-link">Orders</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/products" class="nav-link">Products</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/hampers" class="nav-link">Hampers</a>
-          </li>
-          <li class="nav-item">
-            <a href="/orderDashboard/customers" class="nav-link">Customers</a>
-          </li>
-        </ul>
-      </div>
-      <div class="logout-container d-flex flex-row">
-        <p class="text-light m-0 me-3 align-middle py-2">Order Account </p>
-        <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
-      </div>
+        <button class="navbar-toggler ms-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto px-3">
+            <li class="nav-item">
+              <a href="/invoiceDashboard" class="nav-link">Invoices</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/products" class="nav-link">Products</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/hampers" class="nav-link">Hampers</a>
+            </li>
+            <li class="nav-item">
+              <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout-container d-flex flex-row">
+          <p class="text-light m-0 me-3 align-middle py-2">Invoice Account </p>
+          <button class="btn btn-light me-3" onclick="redirect('/logout')">Logout</button>
+        </div>
+        
     </nav>
 
     <!-- Wrapper -->
     <form
       class="container mx-auto mt-5 row mb-lg-0 px-0"
       id="myForm"
-      action="/orderDashboard/editOrder/<%= orderData._id %>"
+      action="/invoiceDashboard/addInvoice"
       method="post"
     >
       <!-- Left Side -->
       <div class="col-lg addOrderLeft mb-5">
-        <h1>✍️Edit Order🧾</h1>
+        <h1>➕Add Invoice🧾</h1>
         <br />
 
         <div class="sizeWarning">This sub-domain is not intended to be viewed in a small resolution. Please rotate your device to proceed.</div>
 
+
+        <!-- Select Option for Scratch / Taken -->
+        <div
+          class="btn-group d-flex justify-content-center"
+          role="group"
+          onchange="toggleInvoiceType()"
+        >
+          <input
+            type="radio"
+            class="btn-check"
+            name="invoiceType"
+            value="scratch"
+            id="invoiceTypeScratch"
+            autocomplete="off"
+            checked
+          />
+          <label class="btn btn-outline-primary order-button" for="invoiceTypeScratch"
+            >Create from Scratch</label
+          >
+
+          <input
+            type="radio"
+            class="btn-check"
+            name="invoiceType"
+            value="taken"
+            id="invoiceTypeTaken"
+            autocomplete="off"
+          />
+          <label class="btn btn-outline-primary order-button" for="invoiceTypeTaken"
+            >Take from Order</label
+          >
+        </div>
+        <br />
+
+        <!-- Orders to choose from -->
+        <div class="form-group orderSelector" hidden>
+          <label for="contents">Sent Order</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col mx-0 px-0 pe-2">
+              <select
+                name="chosenOrder"
+                id="chosenOrder"
+                class="form-select"
+                data-placeholder="Choose a product"
+                onchange="convertOrderToInvoice()"
+              >
+                <option disabled selected value="">Select a sent order</option>
+                <% orders.forEach(order => { %>
+                <option value="<%= order._id %>"><%= order.deliveryDate %> - <%= order.customerName %> (<%= order.productContent.length + order.hamperContent.length %> items)</option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+
+          <br />
+        </div>
+
+        
+        <!-- Product Contents -->
+        <div class="form-group">
+          <label for="contents">Product Contents</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col mx-0 px-0 pe-2">
+              <select
+                name="productContentInput"
+                id="productContentInput"
+                class="form-select"
+                data-placeholder="Choose a product"
+                onchange="addProductToInvoice()"
+              >
+                <option disabled selected value="null">Select a product</option>
+                <% products.forEach(product => { %>
+                <option value="<%= product._id %>"><%= product.name %></option>
+                <% }) %>
+              </select>
+            </div>
+          </div>
+
+          <br />
+        </div>
+
+        <!-- Hamper Contents -->
+        <div class="form-group">
+          <label for="contents">Hamper Contents</label>
+
+          <!-- Selector -->
+          <div class="row m-0">
+            <div class="col mx-0 px-0 pe-2">
+              <select
+                name="hamperContentInput"
+                id="hamperContentInput"
+                class="form-select"
+                data-placeholder="Choose a hamper"
+                onchange="addHamperToInvoice()"
+              >
+                <option disabled selected value="null">Select a hamper</option>
+                <% hampers.forEach(hamper => { %>
+                <option value="<%= hamper._id %>"><%= hamper.name %></option>
+                <% }) %>
+              </select>
+            </div>
+            <!-- <div class="col-2 col-xxl-1 mx-0 px-0">
+              <button
+                class="btn btn-primary btn-sm form-control specialFocus"
+                type="button"
+                onclick="addHamperToInvoice()"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
+            </div> -->
+          </div>
+
+          <br />
+        </div>
 
         <!-- Select Option for Customer -->
         <div
@@ -115,74 +226,6 @@
         </div>
         <br />
 
-        <!-- Product Contents -->
-        <div class="form-group">
-          <label for="contents">Product Contents</label>
-
-          <!-- Selector -->
-          <div class="row m-0">
-            <div class="col mx-0 px-0 pe-2">
-              <select
-                name="productContentInput"
-                id="productContentInput"
-                class="form-select"
-                data-placeholder="Choose a product"
-                onchange="addProductToOrder()"
-              >
-                <option disabled selected value="null">Select a product</option>
-                <% products.forEach(product => { %>
-                <option value="<%= product._id %>"><%= product.name %></option>
-                <% }) %>
-              </select>
-            </div>
-            <!-- <div class="col-2 col-xxl-1 mx-0 px-0">
-              <button
-                class="btn btn-primary btn-sm form-control specialFocus"
-                type="button"
-                onclick="addProductToOrder()"
-              >
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div> -->
-          </div>
-
-          <br />
-        </div>
-
-        <!-- Hamper Contents -->
-        <div class="form-group">
-          <label for="contents">Hamper Contents</label>
-
-          <!-- Selector -->
-          <div class="row m-0">
-            <div class="col mx-0 px-0 pe-2">
-              <select
-                name="hamperContentInput"
-                id="hamperContentInput"
-                class="form-select"
-                data-placeholder="Choose a hamper"
-                onchange="addHamperToOrder()"
-              >
-                <option disabled selected value="null">Select a hamper</option>
-                <% hampers.forEach(hamper => { %>
-                <option value="<%= hamper._id %>"><%= hamper.name %></option>
-                <% }) %>
-              </select>
-            </div>
-            <!-- <div class="col-2 col-xxl-1 mx-0 px-0">
-              <button
-                class="btn btn-primary btn-sm form-control specialFocus"
-                type="button"
-                onclick="addHamperToOrder()"
-              >
-                <i class="fa-solid fa-plus"></i>
-              </button>
-            </div> -->
-          </div>
-
-          <br />
-        </div>
-
         <!-- Existing Customer Selector -->
         <div class="form-group existingCustomerContainer">
           <label for="existingCustomer" class="form-label"
@@ -194,17 +237,10 @@
             id="existingCustomer"
             required
           >
-            <option disabled value="">Select existing customer</option>
-            <!-- prettier-ignore -->
+            <option disabled selected value="">Select existing customer</option>
             <% customers.forEach(customer => { %>
-            <!-- prettier-ignore -->
-            <% if(customer._id === orderData.customerId) { %>
-            <option value="<%= customer._id %>" selected>
-              <%= customer.name %>
-            </option>
-            <% } else { %>
             <option value="<%= customer._id %>"><%= customer.name %></option>
-            <% } %> <% }); %>
+            <% }) %>
           </select>
           <br />
         </div>
@@ -259,40 +295,37 @@
             name="deliveryDate"
             id="deliveryDate"
             placeholder="Enter Delivery Date"
-            value="<%= orderData.deliveryDateOld.split('T')[0] %>"
           />
         </div>
         <br />
 
-        <!-- Order Discount -->
+        <!-- Invoice Discount -->
         <div class="form-group">
-          <label for="orderDiscount" class="form-label">Order Discount</label>
+          <label for="invoiceDiscount" class="form-label">Invoice Discount</label>
           <div class="input-group">
             <input
               type="number"
               class="form-control"
-              name="orderDiscount"
-              id="orderDiscount"
-              placeholder="Enter Order Discount"
+              name="invoiceDiscount"
+              id="invoiceDiscount"
+              placeholder="Enter Invoice Discount"
               step="0.01"
               min="0"
-              value="<%= orderData.orderDiscount %>"
             />
             <div class="input-group-text">%</div>
           </div>
         </div>
         <br />
 
-        <!-- Order Note -->
+        <!-- Invoice Note -->
         <div class="form-group">
-          <label for="orderNote" class="form-label">Order Note</label>
+          <label for="invoiceNote" class="form-label">Invoice Note</label>
           <input
             type="text"
             class="form-control"
-            name="orderNote"
-            id="orderNote"
-            placeholder="Enter Order Note"
-            value="<%= orderData.details %>"
+            name="invoiceNote"
+            id="invoiceNote"
+            placeholder="Enter Invoice Note"
           />
         </div>
 
@@ -310,16 +343,16 @@
           <button
             type="button"
             class="btn btn-primary form-btn ms-2"
-            onclick="redirect('/orderDashboard')"
+            onclick="redirect('/invoiceDashboard/products')"
           >
             Cancel
           </button>
         </div>
       </div>
 
-      <!-- Order Display -->
+      <!-- Invoice Display -->
       <div class="container col-lg border-lg-start ms-lg-5 ps-md-5">
-        <h3 class="text-center">Order Contents✍️</h3>
+        <h3 class="text-center">Invoice Contents✍️</h3>
         <div class="container table-responsive mt-4 px-0">
           <table
             class="table realContents w-100 mx-auto text-center align-middle"
@@ -350,11 +383,28 @@
       window.location.href = domain;
     }
 
-    function changeCustomerType() {
+    function toggleInvoiceType() {
       let customerType = document.querySelector(
+        "input[name='invoiceType']:checked"
+      ).value;
+      if (customerType === "scratch") {
+        document
+          .querySelector(".orderSelector")
+          .setAttribute("hidden", true);
+        document.querySelector("#chosenOrder").removeAttribute("required");
+      } else {
+        document
+          .querySelector(".orderSelector")
+          .removeAttribute("hidden");
+        document.querySelector('#chosenOrder').setAttribute("required", true);
+      }
+    }
+
+    function changeCustomerType() {
+      let invoiceType = document.querySelector(
         "input[name='customerType']:checked"
       ).value;
-      if (customerType === "new") {
+      if (invoiceType === "new") {
         document
           .querySelector(".newCustomerContainer")
           .removeAttribute("hidden");
@@ -406,7 +456,6 @@
         });
     });
 
-
     function advanceTab(el) {
       let nextBtn = el.parentElement.parentElement.querySelector(".btn");
       console.log(nextBtn);
@@ -416,7 +465,7 @@
       }, 20);
     }
 
-    function addProductToOrder() {
+    function addProductToInvoice() {
       var selectedProductId = document.getElementById(
         "productContentInput"
       ).value;
@@ -444,7 +493,7 @@
           classNames: ["col-2", "text-center", "px-4","quantity"],
         },
         {
-          content: '<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="0" step="0.01" min="0">',
+          content: '<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="0" step="0.01" min="0" max="100">',
           classNames: ["col-2","text-center","px-4","discount"],
         },
         {
@@ -470,7 +519,7 @@
       document.getElementById("productContentInput").value = "null";
     }
 
-    function addHamperToOrder() {
+    function addHamperToInvoice() {
       var selectedHamperId = document.getElementById(
         "hamperContentInput"
       ).value;
@@ -498,7 +547,7 @@
           classNames: ["col-2", "text-center", "px-4","quantity"],
         },
         {
-          content: '<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="0" step="0.01" min="0">',
+          content: '<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="0" step="0.01" min="0" max="100">',
           classNames: ["col-2","text-center","px-4","discount"],
         },
         {
@@ -524,10 +573,62 @@
       document.getElementById("hamperContentInput").value = "null";
     }
 
+    async function convertOrderToInvoice() {
+      await clearInvoiceRight();
+      var selectedOrderId = document.querySelector('#chosenOrder').value;
+      var orderDetail = <%- JSON.stringify(orders) %>.find(order => order._id === selectedOrderId);
 
-    function getProductPriceInput(productId, priceType = false, priceValue = "") {
+      document.querySelector(`#existingCustomer > option[value='']`).removeAttribute('selected');
+      $('#existingCustomer').val(orderDetail.customerId).trigger('change');
+      document.querySelector('#deliveryDate').value = orderDetail.deliveryDateOld.split('T')[0] || "";
+      document.querySelector('#invoiceDiscount').value = orderDetail.orderDiscount || 0;
+      document.querySelector('#invoiceNote').value = orderDetail.details || "";
+
+      orderDetail.productContent.forEach(product => {
+        let currentId = product.productId;
+        $('#productContentInput').val(currentId).trigger('change');
+
+        let priceTypeInput = document.querySelector(`[id="${currentId}_priceType"]`);
+        priceTypeInput.value = product.priceType;
+        updatePriceType(priceTypeInput);
+        priceTypeInput.nextElementSibling.value = product.customPrice || "";
+        let quantityInput = priceTypeInput.parentElement.nextElementSibling.firstChild;
+        quantityInput.value = product.quantity;
+        let discountInput = quantityInput.parentElement.nextElementSibling.firstChild;
+        discountInput.value = product.discount;
+      })
+
+      orderDetail.hamperContent.forEach(hamper => {
+        let currentId = hamper.hamperId;
+        $('#hamperContentInput').val(currentId).trigger('change');
+
+        let priceTypeInput = document.querySelector(`[id="${currentId}_priceType"]`);
+        priceTypeInput.value = hamper.priceType;
+        updatePriceType(priceTypeInput);
+        priceTypeInput.nextElementSibling.value = hamper.customPrice || "";
+        let quantityInput = priceTypeInput.parentElement.nextElementSibling.firstChild;
+        quantityInput.value = hamper.quantity;
+        let discountInput = quantityInput.parentElement.nextElementSibling.firstChild;
+        discountInput.value = hamper.discount;
+      })
+      
+    }
+
+    function clearInvoiceRight() {
+      let productDeletes = document.querySelectorAll('button[onclick="removeThisProduct(this)"]');
+      let hamperDeletes = document.querySelectorAll('button[onclick="removeThisHamper(this)"]');
+      productDeletes.forEach(button => {
+        button.click();
+      })
+      hamperDeletes.forEach(button => {
+        button.click();
+      })
+    }
+
+    function getProductPriceInput(productId) {
       let products = <%- JSON.stringify(products) %> ;
       let selectedProduct = products.find(product => product._id === productId);
+      console.log(selectedProduct);
       let inputHTML = `
       <select
         name="${productId}_priceType"
@@ -539,23 +640,13 @@
       `;
       console.log(selectedProduct.prices);
       Object.entries(selectedProduct.prices).forEach(([key,value]) => {
-        if(priceType === key){
-            inputHTML += `<option value="${key}" price-value="${value}" selected>${key}: ${value}</option>`
-        }
-        else{
-            inputHTML += `<option value="${key}" price-value="${value}">${key}: ${value}</option>`
-        }
+        inputHTML += `<option value="${key}" price-value="${value}">${key}: ${value}</option>`
       })
-      if(priceType === 'custom'){
-        inputHTML += `<option value="custom" selected>Custom</option><input type="number" name="${productId}_customPrice" class="form-control" placeholder="Insert a custom price" value="${priceValue}"></select>`
-      }
-      else {
-        inputHTML += `<option value="custom">Custom</option><input type="number" name="${productId}_customPrice" class="form-control" placeholder="Insert a custom price" hidden></select>`
-      }
+      inputHTML += `<option value="custom">Custom</option><input type="number" name="${productId}_customPrice" class="form-control" placeholder="Insert a custom price" hidden></select>`
       return inputHTML;
     }
 
-    function getHamperPriceInput(hamperId, priceType = false, priceValue = "") {
+    function getHamperPriceInput(hamperId) {
       let hampers = <%- JSON.stringify(hampers) %> ;
       let selectedHamper = hampers.find(hamper => hamper._id === hamperId);
       let inputHTML = `
@@ -569,19 +660,9 @@
       `;
       console.log(selectedHamper.prices);
       Object.entries(selectedHamper.prices).forEach(([key,value]) => {
-        if(priceType === key){
-            inputHTML += `<option value="${key}" price-value="${value}" selected>${key}: ${value}</option>`
-        }
-        else{
-            inputHTML += `<option value="${key}" price-value="${value}">${key}: ${value}</option>`
-        }
+        inputHTML += `<option value="${key}" price-value="${value}">${key}: ${value}</option>`
       })
-      if(priceType === 'custom'){
-        inputHTML += `<option value="custom" selected>Custom</option><input type="number" name="${hamperId}_customPrice" class="form-control" placeholder="Insert a custom price" value="${priceValue}"></select>`
-      }
-      else {
-        inputHTML += `<option value="custom">Custom</option><input type="number" name="${hamperId}_customPrice" class="form-control" placeholder="Insert a custom price" hidden></select>`
-      }
+      inputHTML += `<option value="custom">Custom</option><input type="number" name="${hamperId}_customPrice" class="form-control" placeholder="Insert a custom price" hidden></select>`
       return inputHTML;
     }
 
@@ -659,93 +740,5 @@
         alert("Contents must have at least one product!");
       }
     }
-
-    // Populating data
-    document.addEventListener('DOMContentLoaded',() => {
-        // prettier-ignore
-        let products = <%- JSON.stringify(orderData.productContent) %>;
-        let hampers = <%- JSON.stringify(orderData.hamperContent) %>;
-        let realContents = document.querySelector('.realContentsBody');
-        products.forEach(product => {
-            var newProductEntry = document.createElement("tr");
-            var selectedProductId = product.productId;
-            var selectedProductName = product.name;
-            var columns = [
-                { content: selectedProductName, classNames: ["col-3","name"] },
-                {
-                content: getProductPriceInput(selectedProductId, product.priceType, product.priceValue),
-                classNames: ["col","priceInput"],
-                },
-                {
-                content:
-                    `<input type="number" class="form-control text-center w-75 mx-auto" name="quantities[]" value="${product.quantity}" step="0.01" min="0.01">`,
-                classNames: ["col-2", "text-center", "px-4","quantity"],
-                },
-                {
-                content: `<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="${product.discount}" step="0.01" min="0">`,
-                classNames: ["col-2","text-center","px-4","discount"],
-                },
-                {
-                content:
-                    `<button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)">
-                    <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <input type="hidden" name="contents[]" value="${selectedProductId}">
-                    <input type="hidden" name="${selectedProductId}_contentType" value="product">`,
-                classNames: ["col-1", "text-center","trash"],
-                },
-            ];
-
-            columns.forEach((column) => {
-                var td = document.createElement("td");
-                td.innerHTML = column.content;
-                column.classNames.forEach((className) => td.classList.add(className));
-                newProductEntry.appendChild(td);
-            });
-
-            realContents.appendChild(newProductEntry);
-            document.querySelector(`option[value="${selectedProductId}"]`).remove();
-        })
-        hampers.forEach(hamper => {
-            var newHamperEntry = document.createElement("tr");
-            var selectedHamperId = hamper.hamperId;
-            var selectedHamperName = hamper.name;
-            var columns = [
-                { content: selectedHamperName, classNames: ["col-3","name"] },
-                {
-                content: getHamperPriceInput(selectedHamperId, hamper.priceType, hamper.priceValue),
-                classNames: ["col","priceInput"],
-                },
-                {
-                content:
-                    `<input type="number" class="form-control text-center w-75 mx-auto" name="quantities[]" value="${hamper.quantity}" step="0.01" min="0.01">`,
-                classNames: ["col-2", "text-center", "px-4","quantity"],
-                },
-                {
-                content: `<input type="number" class="form-control text-center w-75 mx-auto" name="discounts[]" value="${hamper.discount}" step="0.01" min="0">`,
-                classNames: ["col-2","text-center","px-4","discount"],
-                },
-                {
-                content:
-                    `<button class="btn btn-danger btn-sm" type="button" onclick="removeThisProduct(this)">
-                    <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <input type="hidden" name="contents[]" value="${selectedHamperId}">
-                    <input type="hidden" name="${selectedHamperId}_contentType" value="hamper">`,
-                classNames: ["col-1", "text-center","trash"],
-                },
-            ];
-
-            columns.forEach((column) => {
-                var td = document.createElement("td");
-                td.innerHTML = column.content;
-                column.classNames.forEach((className) => td.classList.add(className));
-                newHamperEntry.appendChild(td);
-            });
-
-            realContents.appendChild(newHamperEntry);
-            document.querySelector(`option[value="${selectedHamperId}"]`).remove();
-        })
-    })
   </script>
 </html>
