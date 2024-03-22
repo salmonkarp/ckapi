@@ -40,6 +40,9 @@
           <li class="nav-item">
             <a href="/invoiceDashboard/customers" class="nav-link">Customers</a>
           </li>
+          <li class="nav-item">
+            <a href="/invoiceDashboard/statistics" class="nav-link">Statistics</a>
+          </li>
         </ul>
       </div>
       <div class="logout-container d-flex flex-row">
@@ -119,6 +122,13 @@
                     
                   </div>
                 </div>
+
+                <div class="row mx-auto mt-3">
+                  <div class="col form-check form-switch ps-2">
+                    <input class="form-check-input ms-1" type="checkbox" id="isArchived" name="isArchived" style="height: 75%; width: 40px">
+                    <label class="form-check-label" for="isArchived" style="white-space: pre-wrap; font-size: 1rem;">  Include Archived Invoices?</label>
+                  </div>
+                </div>
                 <br>
 
                 <div class="container d-flex justify-content-end gap-2">
@@ -162,6 +172,7 @@
               data-bs-parent="#accordionExample"
             >
               <div class="accordion-body position-relative">
+                <% if(!invoice.isArchived){ %>
                 <div class="container button-container-1">
                   <button 
                     class="btn btn-primary order-button btn-sm position-sticky end-0" 
@@ -176,12 +187,19 @@
                     <i class="fa-solid fa-print"></i>
                   </button>
                   <button 
+                    class="btn btn-secondary  order-button btn-sm position-sticky end-0"  
+                    onclick="redirect('/invoiceDashboard/archiveInvoice/<%= invoice._id %>')"
+                    >
+                    <i class="fa-solid fa-archive"></i>
+                  </button>
+                  <button 
                     class="btn btn-danger order-button btn-sm position-sticky end-0"  
                     onclick="redirect('/invoiceDashboard/deleteInvoice/<%= invoice._id %>')"
                     >
                     <i class="fa-solid fa-trash"></i>
                   </button>
                 </div>
+                <% } %>
                 
                 <% if(invoice.oldProductId !== '' && invoice.oldProductId) {%>
                   Invoice Type: Taken from order sent on <%= invoice.updatedAt.split('T')[0] %><br>
@@ -190,6 +208,10 @@
                   <% } %>
                 <% } else { %>
                   Invoice Type: Created from Scratch <br>
+                <% } %>
+
+                <% if(invoice.isArchived) {%>
+                  <strong>This invoice has been archived, and thus cannot be modified. </strong> <br>
                 <% } %>
                 <br>
 
@@ -202,6 +224,7 @@
 
                 <div hidden id="customerName"><%= invoice.customerName %></div>
                 <div hidden id="deliveryDate"><%= invoice.deliveryDateOld.split('T')[0] %></div>
+                <div hidden id="isArchived"><%= invoice.isArchived %></div>
 
                 <div
                   class="table-responsive flipped-container"
@@ -299,20 +322,11 @@
       window.location.href = domain
     }
 
-    // const accordionItems = document.querySelectorAll('.accordion-collapse.realStuff')
-
-    // accordionItems.forEach((el)=>{
-    //     el.addEventListener('shown.bs.collapse',(e)=>{
-    //       console.log(window.scrollY, el.parentNode.offsetTop);
-    //       console.log(el.parentNode.offsetTop, window.scrollX);
-    //       window.scrollTo(window.scrollX, el.parentNode.offsetTop);
-    //     })
-    // })
-
     function applyFilter() {
       let customerName = document.querySelector("#customerNameFilter").value.toLowerCase() || "";
       let startDate = new Date(document.querySelector("#startDate").value || "1970-01-01");
       let endDate = new Date(document.querySelector("#endDate").value || "2050-12-31");
+      let isArchived = document.querySelector("#isArchived").checked
       console.log(customerName, startDate, endDate);
       const contents = document.querySelectorAll(".realContents");
       contents.forEach((content) => {
@@ -321,8 +335,10 @@
             .textContent.toLowerCase();
           const currentDeliveryDate = new Date(content
             .querySelector("#deliveryDate").textContent);
+          const currentIsArchived = content.querySelector("#isArchived").textContent;
           console.log(currentCustomerName, customerName);
-          if (currentCustomerName.includes(customerName) && (currentDeliveryDate >= startDate && currentDeliveryDate <= endDate) ) {
+          console.log(isArchived,currentIsArchived);
+          if (currentCustomerName.includes(customerName) && (currentDeliveryDate >= startDate && currentDeliveryDate <= endDate && ((isArchived === false && currentIsArchived === 'false') || (isArchived == true))) ) {
             content.style.display = "";
           } else {
             content.style.display = "none";
@@ -334,7 +350,7 @@
       document.querySelector("#customerNameFilter").value = "";
       document.querySelector("#startDate").value = "";
       document.querySelector("#endDate").value = "";
-      document.querySelector("#isSent").checked = false;
+      document.querySelector("#isArchived").checked = false;
       applyFilter();
     }
 

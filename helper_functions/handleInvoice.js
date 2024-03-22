@@ -12,6 +12,7 @@ async function handleInvoice(body) {
   returnObject.invoiceDiscount = parseFloat(body.invoiceDiscount) || 0;
   returnObject.details = body.invoiceNote || "";
   returnObject.deliveryDate = body.deliveryDate || Date.now();
+  returnObject.isArchived = false;
 
   returnObject.productContent = [];
   returnObject.hamperContent = [];

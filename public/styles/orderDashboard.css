@@ -108,7 +108,7 @@
   padding: 0;
 
 
-  @media (max-width:576px) {
+  @media (max-width:1200px) {
     position: relative;
     display: flex;
     flex-direction: row;

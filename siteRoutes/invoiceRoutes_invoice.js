@@ -228,6 +228,55 @@ router.get("/printInvoice/:id", (req, res) => {
     });
 })
 
+router.get("/archiveInvoice/:id", (req, res) => {
+  let invoiceId = req.params.id;
+  axios
+    .get(api_url + "/api/aggregation/invoiceDetail/" + invoiceId, {
+      headers,
+    })
+    .then((response) => {
+      console.log(response.data);
+      let invoice = response.data;
+      res.render("invoiceDashboard_archiveInvoice", { invoice });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error", { error });
+    });
+})
+
+router.post("/archiveInvoice/:id", async (req, res) => {
+  let invoiceId = req.params.id;
+  let response = await axios.get(api_url + "/api/invoice/" + invoiceId, {headers});
+  response.data.isArchived = true;
+  axios
+    .put(api_url + "/api/invoice/" + invoiceId, response.data, { headers })
+    .then((response) => {
+      res.redirect("/invoiceDashboard");
+    })
+    .catch((error) => {
+      console.log(error);
+      res.render("error", { error });
+    });
+})
+
+router.get("/statistics", (req,res) => {
+  let invoiceArray = [];
+  axios
+    .get(api_url + "/api/aggregation/invoiceDetail", {
+      headers,
+    })
+    .then((response) => {
+      invoiceArray.push(response.data);
+      const slicedData = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      res.render("invoiceDashboard_statistics", { slicedData });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error", { error });
+    });
+})
+
 async function drawContents(doc, data){
   doc.fontSize(11);
   doc.text(data.deliveryDate,425,40);
