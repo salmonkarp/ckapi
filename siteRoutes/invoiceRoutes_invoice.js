@@ -234,6 +234,7 @@ async function drawContents(doc, data){
   doc.text(data.customerName,425,70);
   doc.text(data.customerAddress,425,90);
   doc.text(data.customerNote,425,130);
+  doc.text(data.details,425,150);
   let additionalIndexes = 0;
   let orderTotal = 0;
   data.productContent.forEach((product,i) => {
@@ -244,8 +245,6 @@ async function drawContents(doc, data){
       doc.text('   x',currentX + 25,currentY);
       doc.text(product.name,currentX + 65,currentY);
       doc.text(product.priceValue + ' (' + product.priceType + ')',currentX + 275, currentY);
-      
-      console.log(currentY);
       if(product.discount > 0){
           doc.text(Math.ceil(product.priceValue * product.quantity * (1- (product.discount / 100))).toLocaleString(),currentX + 380, currentY);
           currentY += 15;
@@ -270,8 +269,6 @@ async function drawContents(doc, data){
       doc.text('   x',currentX + 25,currentY);
       doc.text(hamper.name,currentX + 65,currentY);
       doc.text(hamper.priceValue + ' (' + hamper.priceType + ')',currentX + 275, currentY);
-      
-      console.log(currentY);
       if(hamper.discount > 0){
           doc.text(Math.ceil(hamper.priceValue * hamper.quantity * (1- (hamper.discount / 100))).toLocaleString(),currentX + 380, currentY);
           currentY += 15;
@@ -288,7 +285,14 @@ async function drawContents(doc, data){
       }
   })
 
+  doc.text('Total', 365, 500);
   doc.text(orderTotal.toLocaleString(), 470, 500);
+  if(data.invoiceDiscount > 0){
+    doc.text('Discount (' + data.invoiceDiscount + '%)', 365, 515);
+    doc.text(Math.ceil(orderTotal * data.invoiceDiscount / 100).toLocaleString(), 470, 515);
+    doc.text('Final Total', 365, 530);
+    doc.text(Math.ceil(orderTotal * (1 - (data.invoiceDiscount / 100))).toLocaleString(), 470, 530);
+  }
 }
 
 module.exports = router;

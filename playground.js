@@ -68,7 +68,7 @@ drawContents(doc, data);
 doc.pipe(fs.createWriteStream('./output.pdf'));
 doc.end()
 
-async function drawContents(drawContents, data){
+async function drawContents(doc, data){
     doc.fontSize(11);
     doc.text(data.deliveryDate,425,40);
     doc.text(data.customerName,425,70);
@@ -128,7 +128,14 @@ async function drawContents(drawContents, data){
         }
     })
 
+    doc.text('Total', 365, 500);
     doc.text(orderTotal.toLocaleString(), 470, 500);
+    if(data.invoiceDiscount > 0){
+      doc.text('Discount (' + data.invoiceDiscount + '%)', 365, 515);
+      doc.text(Math.ceil(orderTotal * data.invoiceDiscount / 100).toLocaleString(), 470, 515);
+      doc.text('Final Total', 365, 530);
+      doc.text(Math.ceil(orderTotal * (1 - (data.invoiceDiscount / 100))).toLocaleString(), 470, 530);
+    }
 
     
 }
