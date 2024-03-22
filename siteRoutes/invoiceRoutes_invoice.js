@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
+const fs = require('fs');
+const PDFDocument = require('pdfkit');
 const handleOrder = require("../helper_functions/handleOrder");
 const handleInvoice = require("../helper_functions/handleInvoice");
 
@@ -203,5 +205,90 @@ router.post("/deleteInvoice/:id", async (req, res) => {
     });
 });
 
+router.get("/printInvoice/:id", (req, res) => {
+  let invoiceId = req.params.id;
+  axios
+    .get(api_url + "/api/aggregation/invoiceDetail/" + invoiceId, {
+      headers,
+    })
+    .then(async (response) => {
+      console.log(response.data);
+      let invoice = response.data;
+      const doc = new PDFDocument()
+      let filename = 'output.pdf'
+      res.setHeader('Content-disposition', 'inline; filename="' + filename + '"')
+      res.setHeader('Content-type', 'application/pdf')
+      drawContents(doc, invoice);
+      doc.pipe(res)
+      doc.end()
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error", { error });
+    });
+})
+
+async function drawContents(doc, data){
+  doc.fontSize(11);
+  doc.text(data.deliveryDate,425,40);
+  doc.text(data.customerName,425,70);
+  doc.text(data.customerAddress,425,90);
+  doc.text(data.customerNote,425,130);
+  let additionalIndexes = 0;
+  let orderTotal = 0;
+  data.productContent.forEach((product,i) => {
+      let index = i + additionalIndexes;
+      let currentX = 90;
+      let currentY = 225 + (index * 15);
+      doc.text(product.quantity,currentX,currentY);
+      doc.text('   x',currentX + 25,currentY);
+      doc.text(product.name,currentX + 65,currentY);
+      doc.text(product.priceValue + ' (' + product.priceType + ')',currentX + 275, currentY);
+      
+      console.log(currentY);
+      if(product.discount > 0){
+          doc.text(Math.ceil(product.priceValue * product.quantity * (1- (product.discount / 100))).toLocaleString(),currentX + 380, currentY);
+          currentY += 15;
+          doc.text('Discount ('+product.discount+'%)',currentX + 65,currentY);
+          doc.text(Math.ceil(-product.priceValue * product.discount / 100).toLocaleString(),currentX + 275, currentY);
+          currentY += 15;
+          doc.text('='+Math.ceil(product.priceValue * (1 - (product.discount / 100))).toLocaleString(),currentX + 275, currentY);
+          additionalIndexes+=2;
+          orderTotal += Math.ceil(product.priceValue * product.quantity * (1- (product.discount / 100)));
+      }
+      else{
+          doc.text(Math.ceil(product.priceValue * product.quantity).toLocaleString(),currentX + 380, currentY);
+          orderTotal += Math.ceil(product.priceValue * product.quantity);
+      }
+  
+  })
+  data.hamperContent.forEach((hamper,i) => {
+      let index = i + additionalIndexes + data.productContent.length;
+      let currentX = 90;
+      let currentY = 225 + (index * 15);
+      doc.text(hamper.quantity,currentX,currentY);
+      doc.text('   x',currentX + 25,currentY);
+      doc.text(hamper.name,currentX + 65,currentY);
+      doc.text(hamper.priceValue + ' (' + hamper.priceType + ')',currentX + 275, currentY);
+      
+      console.log(currentY);
+      if(hamper.discount > 0){
+          doc.text(Math.ceil(hamper.priceValue * hamper.quantity * (1- (hamper.discount / 100))).toLocaleString(),currentX + 380, currentY);
+          currentY += 15;
+          doc.text('Discount ('+hamper.discount+'%)',currentX + 65,currentY);
+          doc.text(Math.ceil(-hamper.priceValue * hamper.discount / 100).toLocaleString(),currentX + 275, currentY);
+          currentY += 15;
+          doc.text('='+Math.ceil(hamper.priceValue * (1 - (hamper.discount / 100))).toLocaleString(),currentX + 275, currentY);
+          additionalIndexes+=2;
+          orderTotal += Math.ceil(hamper.priceValue * hamper.quantity * (1- (hamper.discount / 100)));
+      }
+      else{
+          doc.text(Math.ceil(hamper.priceValue * hamper.quantity).toLocaleString(),currentX + 380, currentY);
+          orderTotal += Math.ceil(hamper.priceValue * hamper.quantity);
+      }
+  })
+
+  doc.text(orderTotal.toLocaleString(), 470, 500);
+}
 
 module.exports = router;
