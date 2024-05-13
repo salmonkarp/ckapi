@@ -6,6 +6,7 @@ const fs = require('fs');
 const PDFDocument = require('pdfkit');
 const handleOrder = require("../helper_functions/handleOrder");
 const handleInvoice = require("../helper_functions/handleInvoice");
+const getStatData = require("../helper_functions/getStatData")
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
@@ -260,7 +261,7 @@ router.post("/archiveInvoice/:id", async (req, res) => {
     });
 })
 
-router.get("/statistics", (req,res) => {
+router.get("/statistics", async (req,res) => {
   let invoiceArray = [];
   axios
     .get(api_url + "/api/aggregation/invoiceDetail", {
@@ -268,8 +269,12 @@ router.get("/statistics", (req,res) => {
     })
     .then((response) => {
       invoiceArray.push(response.data);
-      const slicedData = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
-      res.render("invoiceDashboard_statistics", { slicedData });
+      invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      getStatData(invoiceArray).then((statData) => {
+        console.log(statData);
+        res.render("invoiceDashboard_statistics", { statData });
+      })
+      
     })
     .catch((error) => {
       console.error(error);
