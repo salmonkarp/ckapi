@@ -120,7 +120,7 @@ async function getStatData(objects) {
         })
         
         let sortedInvoiceList = (invoiceList).sort((b, a) => a.total - b.total);
-        let sortedDayList = Object.entries(dayList).sort((a,b) => a[1] - b[1]);
+        let sortedDayList = Object.entries(dayList).sort((a,b) => a[0] - b[0]);
         let xValues = [], yValues = [];
         sortedDayList.forEach(pair => {
           let date = new Date(pair[0]);

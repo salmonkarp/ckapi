@@ -57,10 +57,46 @@
     <h1 class="w-100 text-center mt-5 mb-4">Invoice Statistics📈</h1>
 
     <!-- Filter -->
-    <p class="text-sm mx-5" style="font-weight:500">Displaying invoices from 2024-02-19 to 2024-03-19</p>
+    <div class="row mx-5 gap-3">
+      <div class="container col-7 bg-light rounded-3 px-3 py-3 align-content-center">
+        <h4 class="text-decoration-underline ">
+          Displaying invoices from <%= statData.dateStart.toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) %> to <%= statData.dateEnd.toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'}) %>
+        </h4>
+      </div>
+      <div class="container col bg-light rounded-3 px-3 py-3">
+        <form action="/invoiceDashboard/statistics" method="post" class="row">
+          <div class="col">
+            <div class="form-floating">
+              <input
+                type="date"
+                class="form-control"
+                id="dateStart"
+                name="dateStart"
+              />
+              <label for="dateStart">Start Date</label>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-floating">
+              <input
+                type="date"
+                class="form-control"
+                id="dateEnd"
+                name="dateEnd"
+              />
+              <label for="dateEnd">End Date</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-sm btn-primary order-button col-2 stat-btn mx-2">Apply</button>
+        </form>
+        
+      </div>
+      
+    </div>
+    
     
     <!-- Top Stats -->
-    <div class="row mx-5 gap-3">
+    <div class="row mx-5 gap-3 mt-4 mb-4">
       <!-- Top Invoices -->
       <div class="container col-md-5 bg-light rounded-3 px-3 py-3 table-responsive top-chart">
         <h3 class="mb-3 mt-1">Top Invoices</h3>
@@ -113,7 +149,7 @@
         <table class="table table-striped table-borderless">
           <thead>
             <tr class="table-dark ">
-              <th>Item</th>
+              <th>Product</th>
               <th>Purchases</th>
             </tr>
           </thead>
@@ -155,10 +191,18 @@
             <% }); %>
           </tbody>
         </table>
-        <h3 class="mb-3 mt-1">Statistics</h3>
-        <h6>Total Earnings: <%= formatRupiah(overallTotal) %> </h6>
-        <h6>Highest earning order: <%= statData.invoiceList[0].customerName %> on <%= statData.invoiceList[0].deliveryDate %></h6>
-        <h6>Lowest earning order: <%= statData.invoiceList[statData.invoiceList.length - 1].customerName %> on <%= statData.invoiceList[statData.invoiceList.length - 1].deliveryDate %></h6>
+        <h3 class="mb-3 mt-1">More Statistics</h3>
+        <h6><strong>Total Earnings: </strong><%= formatRupiah(overallTotal) %> </h6>
+        <h6><strong>Highest earning order: </strong><br> 
+          <% if(statData.invoiceList.length > 0) { %>
+          <%= statData.invoiceList[0].customerName %> on <%= statData.invoiceList[0].deliveryDate %> (<%= formatRupiah(statData.invoiceList[0].total) %>)
+          <% } %>
+        </h6>
+        <h6><strong>Lowest earning order: </strong><br>
+          <% if(statData.invoiceList.length > 0) { %>
+          <%= statData.invoiceList[statData.invoiceList.length - 1].customerName %> on <%= statData.invoiceList[statData.invoiceList.length - 1].deliveryDate %> (<%= formatRupiah(statData.invoiceList[statData.invoiceList.length - 1].total) %>)
+          <% } %>
+        </h6>
       </div>
       <div class="container col-8 bg-light rounded-3 px-3 py-3">
         <h3 class="mb-3 mt-1">Earnings by Day</h3>

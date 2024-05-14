@@ -271,13 +271,52 @@ router.get("/statistics", async (req,res) => {
       invoiceArray.push(response.data);
       invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
       let sixMonthsAgo = new Date();
-      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-      console.log(invoiceArray, sixMonthsAgo);
-      invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= sixMonthsAgo);
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 2);
+      invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= sixMonthsAgo && new Date(item.deliveryDateOld) <= new Date());
       getStatData(invoiceArray).then((statData) => {
         statData.dateStart = sixMonthsAgo;
         statData.dateEnd = new Date();
-        console.log("stats",statData);
+        res.render("invoiceDashboard_statistics", { statData });
+      })
+      
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error", { error });
+    });
+})
+
+router.post("/statistics", async (req,res) => {
+  let invoiceArray = [];
+  console.log(req.body.dateStart, req.body.dateEnd);
+  let endDate, startDate;
+  if(req.body.dateEnd){
+    endDate = new Date(req.body.dateEnd);
+  }
+  else{
+    endDate = new Date();
+  }
+  if(req.body.dateStart){
+    startDate = new Date(req.body.dateStart);
+  }
+  else{
+    startDate = new Date(endDate);
+    startDate.setMonth(endDate.getMonth() - 2);
+  }
+  
+  axios
+    .get(api_url + "/api/aggregation/invoiceDetail", {
+      headers,
+    })
+    .then((response) => {
+      invoiceArray.push(response.data);
+      invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      console.log("limits", startDate, endDate);
+      invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= startDate && new Date(item.deliveryDateOld) <= endDate);
+      getStatData(invoiceArray).then((statData) => {
+        statData.dateStart = startDate;
+        statData.dateEnd = endDate;
+        console.log(startDate, endDate);
         res.render("invoiceDashboard_statistics", { statData });
       })
       
