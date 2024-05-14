@@ -270,8 +270,14 @@ router.get("/statistics", async (req,res) => {
     .then((response) => {
       invoiceArray.push(response.data);
       invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      let sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+      console.log(invoiceArray, sixMonthsAgo);
+      invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= sixMonthsAgo);
       getStatData(invoiceArray).then((statData) => {
-        console.log(statData);
+        statData.dateStart = sixMonthsAgo;
+        statData.dateEnd = new Date();
+        console.log("stats",statData);
         res.render("invoiceDashboard_statistics", { statData });
       })
       

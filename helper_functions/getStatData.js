@@ -40,6 +40,7 @@ async function getStatData(objects) {
     let invoiceList = [];
     let productsList = {};
     let itemsList = {};
+    let dayList = {};
     let statData;
     // getting initial hamper info
     let hamperInfo;
@@ -56,6 +57,14 @@ async function getStatData(objects) {
           // for ranking based on each invoice
           object.total = orderTotal;
           invoiceList.push(object);
+
+          // for ranking based on each day
+          if(dayList.hasOwnProperty(object.deliveryDateOld)){
+            dayList[object.deliveryDateOld] += orderTotal;
+          }
+          else{
+            dayList[object.deliveryDateOld] = orderTotal;
+          }
 
           // for ranking based on each customer
           let combinedKey = object.customerId + " @ " + object.customerName;
@@ -110,7 +119,19 @@ async function getStatData(objects) {
           })
         })
         
-        let sortedInvoiceList = (invoiceList).sort((b, a) => a.total - b.total)
+        let sortedInvoiceList = (invoiceList).sort((b, a) => a.total - b.total);
+        let sortedDayList = Object.entries(dayList).sort((a,b) => a[1] - b[1]);
+        let xValues = [], yValues = [];
+        sortedDayList.forEach(pair => {
+          let date = new Date(pair[0]);
+          let readableDate = date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          xValues.push(readableDate);
+          yValues.push(pair[1]);
+        })
         let sortedCustomersList = Object.entries(customersList).sort((b, a) => a[1] - b[1]);
         let sortedProductsList = Object.entries(productsList).sort((b, a) => a[1] - b[1]);
         let sortedItemsList = Object.entries(itemsList).sort((b, a) => a[1] - b[1]);
@@ -118,7 +139,9 @@ async function getStatData(objects) {
           invoiceList: sortedInvoiceList,
           customersList: sortedCustomersList,
           productsList: sortedProductsList,
-          itemsList: sortedItemsList
+          itemsList: sortedItemsList,
+          xValues: xValues,
+          yValues: yValues
         });
       })
       .catch((error) => {

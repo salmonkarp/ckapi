@@ -57,7 +57,7 @@
     <h1 class="w-100 text-center mt-5 mb-4">Invoice Statistics📈</h1>
 
     <!-- Filter -->
-    <p class="text-sm mx-5" style="font-weight:500">Displaying orders from 2024-02-19 to 2024-03-19</p>
+    <p class="text-sm mx-5" style="font-weight:500">Displaying invoices from 2024-02-19 to 2024-03-19</p>
     
     <!-- Top Stats -->
     <div class="row mx-5 gap-3">
@@ -161,10 +161,18 @@
         <h6>Lowest earning order: <%= statData.invoiceList[statData.invoiceList.length - 1].customerName %> on <%= statData.invoiceList[statData.invoiceList.length - 1].deliveryDate %></h6>
       </div>
       <div class="container col-8 bg-light rounded-3 px-3 py-3">
-        <h3 class="mb-3 mt-1">Earnings by Month (currently fake data)</h3>
-        <canvas id="earningsChart" style="max-width:100%; max-height:400px"></canvas>
+        <h3 class="mb-3 mt-1">Earnings by Day</h3>
+        <canvas id="earningsChart" style="max-width:100%;"></canvas>
       </div>
     </div>
+
+    <% statData.xValues.forEach(item => { %>
+      <div style="display: none;" class="xValues"><%= item %></div>
+    <% }) %>
+    <% statData.yValues.forEach(item => { %>
+      <div style="display: none;" class="yValues"><%= item %></div>
+    <% }) %>
+    
     
   </body>
   <script
@@ -176,26 +184,31 @@
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+  
   <script>
     function redirect(domain) {
       window.location.href = domain
     }
-
-    const xValues = [100,200,300,400,500,600,700,800,900,1000];
-
-new Chart("earningsChart", {
-  type: "line",
-  data: {
-    labels: xValues,
-    datasets: [{
-      data: [860,1140,1060,1060,1070,1110,1330,2210,2830,2478],
-      borderColor: "red",
-      fill: false
-    }]
-  },
-  options: {
-    legend: {display: false}
-  }
-});
+    const tempX = document.querySelectorAll('.xValues');
+    const xValues = [];
+    tempX.forEach(item => { xValues.push(item.innerHTML )});
+    const tempY = document.querySelectorAll('.yValues');
+    const yValues = [];
+    tempY.forEach(item => { yValues.push(item.innerHTML )});
+    console.log(xValues);
+    new Chart("earningsChart", {
+      type: "line",
+      data: {
+        labels: xValues,
+        datasets: [{
+          data: yValues,
+          borderColor: "red",
+          fill: false
+        }]
+      },
+      options: {
+        legend: {display: false}
+      }
+    });
   </script>
 </html>
