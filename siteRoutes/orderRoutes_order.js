@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 const handleOrder = require("../helper_functions/handleOrder");
+const getStatData = require("../helper_functions/getStatData");
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
@@ -207,5 +208,75 @@ router.post("/sendOrder/:id", (req, res) => {
       res.render("error", { error });
     });
 });
+
+router.get("/statistics", async (req,res) => {
+  let orderArray = [];
+  axios
+    .get(api_url + "/api/aggregation/orderDetail", {
+      headers,
+    })
+    .then((response) => {
+      orderArray.push(response.data);
+      console.log(orderArray);
+      orderArray = orderArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      let sixMonthsAgo = new Date();
+      sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 2);
+      orderArray = orderArray.filter(item => new Date(item.deliveryDateOld) >= sixMonthsAgo && new Date(item.deliveryDateOld) <= new Date());
+      getStatData(orderArray).then((statData) => {
+        statData.dateStart = sixMonthsAgo;
+        statData.dateEnd = new Date();
+        statData.isSent = true;
+        res.render("orderDashboard_statistics", { statData });
+      })
+      
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error", { error });
+    });
+})
+
+router.post("/statistics", async (req,res) => {
+  let invoiceArray = [];
+  let endDate, startDate;
+  if(req.body.dateEnd){
+    endDate = new Date(req.body.dateEnd);
+  }
+  else{
+    endDate = new Date();
+  }
+  if(req.body.dateStart){
+    startDate = new Date(req.body.dateStart);
+  }
+  else{
+    startDate = new Date(endDate);
+    startDate.setMonth(endDate.getMonth() - 2);
+  }
+  let isSent = req.body.isSent;
+  
+  axios
+    .get(api_url + "/api/aggregation/orderDetail", {
+      headers,
+    })
+    .then((response) => {
+      invoiceArray.push(response.data);
+      invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      console.log("limits", startDate, endDate);
+      invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= startDate && new Date(item.deliveryDateOld) <= endDate);
+      if(!isSent){invoiceArray = invoiceArray.filter(item => !item.isSent)}
+      getStatData(invoiceArray).then((statData) => {
+        statData.dateStart = startDate;
+        statData.dateEnd = endDate;
+        statData.isSent = isSent;
+        console.log(startDate, endDate);
+        res.render("orderDashboard_statistics", { statData });
+      })
+      
+    })
+    .catch((error) => {
+      console.error(error);
+      res.render("error", { error });
+    });
+})
 
 module.exports = router;
