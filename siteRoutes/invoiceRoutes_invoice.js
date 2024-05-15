@@ -276,6 +276,7 @@ router.get("/statistics", async (req,res) => {
       getStatData(invoiceArray).then((statData) => {
         statData.dateStart = sixMonthsAgo;
         statData.dateEnd = new Date();
+        statData.isArchived = true;
         res.render("invoiceDashboard_statistics", { statData });
       })
       
@@ -288,7 +289,6 @@ router.get("/statistics", async (req,res) => {
 
 router.post("/statistics", async (req,res) => {
   let invoiceArray = [];
-  console.log(req.body.dateStart, req.body.dateEnd);
   let endDate, startDate;
   if(req.body.dateEnd){
     endDate = new Date(req.body.dateEnd);
@@ -303,6 +303,7 @@ router.post("/statistics", async (req,res) => {
     startDate = new Date(endDate);
     startDate.setMonth(endDate.getMonth() - 2);
   }
+  let isArchived = req.body.isArchived;
   
   axios
     .get(api_url + "/api/aggregation/invoiceDetail", {
@@ -313,9 +314,11 @@ router.post("/statistics", async (req,res) => {
       invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
       console.log("limits", startDate, endDate);
       invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= startDate && new Date(item.deliveryDateOld) <= endDate);
+      if(!isArchived){invoiceArray = invoiceArray.filter(item => !item.isArchived)}
       getStatData(invoiceArray).then((statData) => {
         statData.dateStart = startDate;
         statData.dateEnd = endDate;
+        statData.isArchived = isArchived;
         console.log(startDate, endDate);
         res.render("invoiceDashboard_statistics", { statData });
       })
