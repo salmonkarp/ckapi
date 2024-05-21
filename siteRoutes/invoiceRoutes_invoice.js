@@ -2,11 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const fs = require('fs');
-const PDFDocument = require('pdfkit');
+const fs = require("fs");
+const PDFDocument = require("pdfkit");
 const handleOrder = require("../helper_functions/handleOrder");
 const handleInvoice = require("../helper_functions/handleInvoice");
-const getStatData = require("../helper_functions/getStatData")
+const getStatData = require("../helper_functions/getStatData");
 
 const api_key = process.env.API_KEY;
 const api_url = process.env.API_URL;
@@ -20,7 +20,9 @@ function fetchFullData() {
   promises.push(axios.get(api_url + "/api/product", { headers }));
   promises.push(axios.get(api_url + "/api/hamper", { headers }));
   promises.push(axios.get(api_url + "/api/customer", { headers }));
-  promises.push(axios.get(api_url + "/api/aggregation/orderDetail", { headers }));
+  promises.push(
+    axios.get(api_url + "/api/aggregation/orderDetail", { headers })
+  );
 
   return Promise.all(promises)
     .then((responses) => {
@@ -32,8 +34,10 @@ function fetchFullData() {
       products.sort((a, b) => a.name.localeCompare(b.name));
       hampers.sort((a, b) => a.name.localeCompare(b.name));
       customers.sort((a, b) => a.name.localeCompare(b.name));
-      const filteredOrders = orders.filter(obj => obj.isSent === true);
-      filteredOrders.sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      const filteredOrders = orders.filter((obj) => obj.isSent === true);
+      filteredOrders.sort((a, b) =>
+        a.deliveryDateOld.localeCompare(b.deliveryDateOld)
+      );
 
       return { products, hampers, customers, filteredOrders };
     })
@@ -49,9 +53,13 @@ function fetchFullFullData(invoiceId) {
   promises.push(axios.get(api_url + "/api/hamper", { headers }));
   promises.push(axios.get(api_url + "/api/customer", { headers }));
   promises.push(
-    axios.get(api_url + "/api/aggregation/invoiceDetail/" + invoiceId, { headers })
+    axios.get(api_url + "/api/aggregation/invoiceDetail/" + invoiceId, {
+      headers,
+    })
   );
-  promises.push(axios.get(api_url + "/api/aggregation/orderDetail", { headers }));
+  promises.push(
+    axios.get(api_url + "/api/aggregation/orderDetail", { headers })
+  );
 
   return Promise.all(promises)
     .then((responses) => {
@@ -64,8 +72,10 @@ function fetchFullFullData(invoiceId) {
       products.sort((a, b) => a.name.localeCompare(b.name));
       hampers.sort((a, b) => a.name.localeCompare(b.name));
       customers.sort((a, b) => a.name.localeCompare(b.name));
-      const filteredOrders = orders.filter(obj => obj.isSent === true);
-      filteredOrders.sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      const filteredOrders = orders.filter((obj) => obj.isSent === true);
+      filteredOrders.sort((a, b) =>
+        a.deliveryDateOld.localeCompare(b.deliveryDateOld)
+      );
 
       return { products, hampers, customers, invoice, filteredOrders };
     })
@@ -78,7 +88,9 @@ function fetchFullFullData(invoiceId) {
 router.get("/addInvoice", (req, res) => {
   fetchFullData()
     .then((combinedData) => {
-      let realFiltered = combinedData.filteredOrders.filter(obj => obj.isConverted === false);
+      let realFiltered = combinedData.filteredOrders.filter(
+        (obj) => obj.isConverted === false
+      );
       res.render("invoiceDashboard_addInvoice", {
         products: combinedData.products,
         hampers: combinedData.hampers,
@@ -187,13 +199,16 @@ router.get("/deleteDangerous/:id", (req, res) => {
 router.post("/deleteInvoice/:id", async (req, res) => {
   let invoiceId = req.params.id;
   let chosenOrder = req.body.chosenOrder;
-  if(chosenOrder){
-    let response = await axios.get(api_url + "/api/order/" + chosenOrder, {headers});
+  if (chosenOrder) {
+    let response = await axios.get(api_url + "/api/order/" + chosenOrder, {
+      headers,
+    });
     response.data.isConverted = false;
     console.log(response.data);
-    await axios.put(api_url + "/api/order/" + chosenOrder, response.data, {headers});
+    await axios.put(api_url + "/api/order/" + chosenOrder, response.data, {
+      headers,
+    });
   }
-  
 
   axios
     .delete(api_url + "/api/invoice/" + invoiceId, { headers })
@@ -215,19 +230,22 @@ router.get("/printInvoice/:id", (req, res) => {
     .then(async (response) => {
       console.log(response.data);
       let invoice = response.data;
-      const doc = new PDFDocument()
-      let filename = 'output.pdf'
-      res.setHeader('Content-disposition', 'inline; filename="' + filename + '"')
-      res.setHeader('Content-type', 'application/pdf')
+      const doc = new PDFDocument();
+      let filename = "output.pdf";
+      res.setHeader(
+        "Content-disposition",
+        'inline; filename="' + filename + '"'
+      );
+      res.setHeader("Content-type", "application/pdf");
       drawContents(doc, invoice);
-      doc.pipe(res)
-      doc.end()
+      doc.pipe(res);
+      doc.end();
     })
     .catch((error) => {
       console.error(error);
       res.render("error", { error });
     });
-})
+});
 
 router.get("/archiveInvoice/:id", (req, res) => {
   let invoiceId = req.params.id;
@@ -244,11 +262,13 @@ router.get("/archiveInvoice/:id", (req, res) => {
       console.error(error);
       res.render("error", { error });
     });
-})
+});
 
 router.post("/archiveInvoice/:id", async (req, res) => {
   let invoiceId = req.params.id;
-  let response = await axios.get(api_url + "/api/invoice/" + invoiceId, {headers});
+  let response = await axios.get(api_url + "/api/invoice/" + invoiceId, {
+    headers,
+  });
   response.data.isArchived = true;
   axios
     .put(api_url + "/api/invoice/" + invoiceId, response.data, { headers })
@@ -259,9 +279,9 @@ router.post("/archiveInvoice/:id", async (req, res) => {
       console.log(error);
       res.render("error", { error });
     });
-})
+});
 
-router.get("/statistics", async (req,res) => {
+router.get("/statistics", async (req, res) => {
   let invoiceArray = [];
   axios
     .get(api_url + "/api/aggregation/invoiceDetail", {
@@ -269,131 +289,198 @@ router.get("/statistics", async (req,res) => {
     })
     .then((response) => {
       invoiceArray.push(response.data);
-      invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      invoiceArray = invoiceArray[0].sort((a, b) =>
+        a.deliveryDateOld.localeCompare(b.deliveryDateOld)
+      );
       let sixMonthsAgo = new Date();
       sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 2);
-      invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= sixMonthsAgo && new Date(item.deliveryDateOld) <= new Date());
+      invoiceArray = invoiceArray.filter(
+        (item) =>
+          new Date(item.deliveryDateOld) >= sixMonthsAgo &&
+          new Date(item.deliveryDateOld) <= new Date()
+      );
       getStatData(invoiceArray).then((statData) => {
         statData.dateStart = sixMonthsAgo;
         statData.dateEnd = new Date();
         statData.isArchived = true;
         res.render("invoiceDashboard_statistics", { statData });
-      })
-      
+      });
     })
     .catch((error) => {
       console.error(error);
       res.render("error", { error });
     });
-})
+});
 
-router.post("/statistics", async (req,res) => {
+router.post("/statistics", async (req, res) => {
   let invoiceArray = [];
   let endDate, startDate;
-  if(req.body.dateEnd){
+  if (req.body.dateEnd) {
     endDate = new Date(req.body.dateEnd);
-  }
-  else{
+  } else {
     endDate = new Date();
   }
-  if(req.body.dateStart){
+  if (req.body.dateStart) {
     startDate = new Date(req.body.dateStart);
-  }
-  else{
+  } else {
     startDate = new Date(endDate);
     startDate.setMonth(endDate.getMonth() - 2);
   }
   let isArchived = req.body.isArchived;
-  
+
   axios
     .get(api_url + "/api/aggregation/invoiceDetail", {
       headers,
     })
     .then((response) => {
       invoiceArray.push(response.data);
-      invoiceArray = invoiceArray[0].sort((a,b) => a.deliveryDateOld.localeCompare(b.deliveryDateOld));
+      invoiceArray = invoiceArray[0].sort((a, b) =>
+        a.deliveryDateOld.localeCompare(b.deliveryDateOld)
+      );
       console.log("limits", startDate, endDate);
-      invoiceArray = invoiceArray.filter(item => new Date(item.deliveryDateOld) >= startDate && new Date(item.deliveryDateOld) <= endDate);
-      if(!isArchived){invoiceArray = invoiceArray.filter(item => !item.isArchived)}
+      invoiceArray = invoiceArray.filter(
+        (item) =>
+          new Date(item.deliveryDateOld) >= startDate &&
+          new Date(item.deliveryDateOld) <= endDate
+      );
+      if (!isArchived) {
+        invoiceArray = invoiceArray.filter((item) => !item.isArchived);
+      }
       getStatData(invoiceArray).then((statData) => {
         statData.dateStart = startDate;
         statData.dateEnd = endDate;
         statData.isArchived = isArchived;
         console.log(startDate, endDate);
         res.render("invoiceDashboard_statistics", { statData });
-      })
-      
+      });
     })
     .catch((error) => {
       console.error(error);
       res.render("error", { error });
     });
-})
+});
 
-async function drawContents(doc, data){
+async function drawContents(doc, data) {
   doc.fontSize(11);
-  doc.text(data.deliveryDate,425,40);
-  doc.text(data.customerName,425,70);
-  doc.text(data.customerAddress,425,90);
-  doc.text(data.customerNote,425,130);
-  doc.text(data.details,425,150);
+  doc.text(data.deliveryDate, 425, 40);
+  doc.text(data.customerName, 425, 70);
+  doc.text(data.customerAddress, 425, 90);
+  doc.text(data.customerNote, 425, 130);
+  doc.text(data.details, 425, 150);
   let additionalIndexes = 0;
   let orderTotal = 0;
-  data.productContent.forEach((product,i) => {
-      let index = i + additionalIndexes;
-      let currentX = 90;
-      let currentY = 225 + (index * 15);
-      doc.text(product.quantity,currentX,currentY);
-      doc.text('   x',currentX + 25,currentY);
-      doc.text(product.name,currentX + 65,currentY);
-      doc.text(product.priceValue + ' (' + product.priceType + ')',currentX + 275, currentY);
-      if(product.discount > 0){
-          doc.text(Math.ceil(product.priceValue * product.quantity * (1- (product.discount / 100))).toLocaleString(),currentX + 380, currentY);
-          currentY += 15;
-          doc.text('Discount ('+product.discount+'%)',currentX + 65,currentY);
-          doc.text(Math.ceil(-product.priceValue * product.discount / 100).toLocaleString(),currentX + 275, currentY);
-          currentY += 15;
-          doc.text('='+Math.ceil(product.priceValue * (1 - (product.discount / 100))).toLocaleString(),currentX + 275, currentY);
-          additionalIndexes+=2;
-          orderTotal += Math.ceil(product.priceValue * product.quantity * (1- (product.discount / 100)));
-      }
-      else{
-          doc.text(Math.ceil(product.priceValue * product.quantity).toLocaleString(),currentX + 380, currentY);
-          orderTotal += Math.ceil(product.priceValue * product.quantity);
-      }
-  
-  })
-  data.hamperContent.forEach((hamper,i) => {
-      let index = i + additionalIndexes + data.productContent.length;
-      let currentX = 90;
-      let currentY = 225 + (index * 15);
-      doc.text(hamper.quantity,currentX,currentY);
-      doc.text('   x',currentX + 25,currentY);
-      doc.text(hamper.name,currentX + 65,currentY);
-      doc.text(hamper.priceValue + ' (' + hamper.priceType + ')',currentX + 275, currentY);
-      if(hamper.discount > 0){
-          doc.text(Math.ceil(hamper.priceValue * hamper.quantity * (1- (hamper.discount / 100))).toLocaleString(),currentX + 380, currentY);
-          currentY += 15;
-          doc.text('Discount ('+hamper.discount+'%)',currentX + 65,currentY);
-          doc.text(Math.ceil(-hamper.priceValue * hamper.discount / 100).toLocaleString(),currentX + 275, currentY);
-          currentY += 15;
-          doc.text('='+Math.ceil(hamper.priceValue * (1 - (hamper.discount / 100))).toLocaleString(),currentX + 275, currentY);
-          additionalIndexes+=2;
-          orderTotal += Math.ceil(hamper.priceValue * hamper.quantity * (1- (hamper.discount / 100)));
-      }
-      else{
-          doc.text(Math.ceil(hamper.priceValue * hamper.quantity).toLocaleString(),currentX + 380, currentY);
-          orderTotal += Math.ceil(hamper.priceValue * hamper.quantity);
-      }
-  })
+  data.productContent.forEach((product, i) => {
+    let index = i + additionalIndexes;
+    let currentX = 90;
+    let currentY = 225 + index * 15;
+    doc.text(product.quantity, currentX, currentY);
+    // doc.text('   x',currentX + 25,currentY);
+    doc.text(product.name, currentX + 65, currentY);
+    // doc.text(product.priceValue + ' (' + product.priceType + ')',currentX + 275, currentY);
+    doc.text(product.priceValue, currentX + 275, currentY);
+    if (product.discount > 0) {
+      doc.text(
+        Math.ceil(
+          product.priceValue * product.quantity * (1 - product.discount / 100)
+        ).toLocaleString(),
+        currentX + 380,
+        currentY
+      );
+      currentY += 15;
+      doc.text("Discount (" + product.discount + "%)", currentX + 65, currentY);
+      doc.text(
+        Math.ceil(
+          (-product.priceValue * product.discount) / 100
+        ).toLocaleString(),
+        currentX + 275,
+        currentY
+      );
+      currentY += 15;
+      doc.text(
+        "=" +
+          Math.ceil(
+            product.priceValue * (1 - product.discount / 100)
+          ).toLocaleString(),
+        currentX + 275,
+        currentY
+      );
+      additionalIndexes += 2;
+      orderTotal += Math.ceil(
+        product.priceValue * product.quantity * (1 - product.discount / 100)
+      );
+    } else {
+      doc.text(
+        Math.ceil(product.priceValue * product.quantity).toLocaleString(),
+        currentX + 380,
+        currentY
+      );
+      orderTotal += Math.ceil(product.priceValue * product.quantity);
+    }
+  });
+  data.hamperContent.forEach((hamper, i) => {
+    let index = i + additionalIndexes + data.productContent.length;
+    let currentX = 90;
+    let currentY = 225 + index * 15;
+    doc.text(hamper.quantity, currentX, currentY);
+    // doc.text('   x',currentX + 25,currentY);
+    doc.text(hamper.name, currentX + 65, currentY);
+    // doc.text(hamper.priceValue + ' (' + hamper.priceType + ')',currentX + 275, currentY);
+    doc.text(hamper.priceValue, currentX + 275, currentY);
+    if (hamper.discount > 0) {
+      doc.text(
+        Math.ceil(
+          hamper.priceValue * hamper.quantity * (1 - hamper.discount / 100)
+        ).toLocaleString(),
+        currentX + 380,
+        currentY
+      );
+      currentY += 15;
+      doc.text("Discount (" + hamper.discount + "%)", currentX + 65, currentY);
+      doc.text(
+        Math.ceil(
+          (-hamper.priceValue * hamper.discount) / 100
+        ).toLocaleString(),
+        currentX + 275,
+        currentY
+      );
+      currentY += 15;
+      doc.text(
+        "=" +
+          Math.ceil(
+            hamper.priceValue * (1 - hamper.discount / 100)
+          ).toLocaleString(),
+        currentX + 275,
+        currentY
+      );
+      additionalIndexes += 2;
+      orderTotal += Math.ceil(
+        hamper.priceValue * hamper.quantity * (1 - hamper.discount / 100)
+      );
+    } else {
+      doc.text(
+        Math.ceil(hamper.priceValue * hamper.quantity).toLocaleString(),
+        currentX + 380,
+        currentY
+      );
+      orderTotal += Math.ceil(hamper.priceValue * hamper.quantity);
+    }
+  });
 
-  doc.text('Total', 365, 500);
+  // doc.text("Total", 365, 500);
   doc.text(orderTotal.toLocaleString(), 470, 500);
-  if(data.invoiceDiscount > 0){
-    doc.text('Discount (' + data.invoiceDiscount + '%)', 365, 515);
-    doc.text(Math.ceil(orderTotal * data.invoiceDiscount / 100).toLocaleString(), 470, 515);
-    doc.text('Final Total', 365, 530);
-    doc.text(Math.ceil(orderTotal * (1 - (data.invoiceDiscount / 100))).toLocaleString(), 470, 530);
+  if (data.invoiceDiscount > 0) {
+    doc.text("Discount (" + data.invoiceDiscount + "%)", 365, 515);
+    doc.text(
+      Math.ceil((orderTotal * data.invoiceDiscount) / 100).toLocaleString(),
+      470,
+      515
+    );
+    doc.text("Final Total", 365, 530);
+    doc.text(
+      Math.ceil(orderTotal * (1 - data.invoiceDiscount / 100)).toLocaleString(),
+      470,
+      530
+    );
   }
 }
 
